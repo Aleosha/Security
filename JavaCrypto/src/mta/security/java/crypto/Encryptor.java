@@ -44,7 +44,7 @@ public class Encryptor {
 		try {
 			
 			byte[] content = null;
-			// Read flat file
+			// Read flat file into byte array
 			URL messageAsResource = Encryptor.class.getResource(FLAT_FILE_PATH);
 			if (messageAsResource != null) {
 				URI uri = messageAsResource.toURI();
@@ -53,6 +53,7 @@ public class Encryptor {
 			}
 			
 			// Generate key pair
+			// TODO get keypair from keystore
 			KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
 			PrivateKey privateKey = keyPair.getPrivate();
 			
@@ -62,8 +63,8 @@ public class Encryptor {
 			// Digest file
 			byte[] digest = digestContent(content);
 			
-			// cipher
-			byte[] cipherText = cipherDigest(digest, privateKey);
+			// cipher content
+			byte[] cipherText = cipherDigest(content, privateKey);
 			KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 			
 			File file = getConfigurationFile();
@@ -134,11 +135,13 @@ public class Encryptor {
 	 * @throws InvalidKeyException
 	 * @throws IllegalBlockSizeException
 	 * @throws BadPaddingException
+	 * @throws NoSuchProviderException 
 	 */
-	private static byte[] cipherDigest(byte[] digest, Key privateKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+	private static byte[] cipherDigest(byte[] content, Key privateKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException {
 		Cipher cipher = Cipher.getInstance("RSA");
 		cipher.init(Cipher.ENCRYPT_MODE, privateKey);
-		byte[] cipherText = cipher.doFinal(digest);
+		
+		byte[] cipherText = cipher.doFinal(content);
 		
 		System.out.println("Cipher text: " + new String(cipherText));
 		return cipherText;
@@ -166,8 +169,9 @@ public class Encryptor {
 	 * @throws NoSuchAlgorithmException
 	 * @throws InvalidKeyException
 	 * @throws SignatureException
+	 * @throws NoSuchProviderException 
 	 */
-	private static byte[] signContent(byte[] content, PrivateKey privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+	private static byte[] signContent(byte[] content, PrivateKey privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, NoSuchProviderException {
 		byte[] signatureBytes;
 		Signature signature = Signature.getInstance("SHA1withRSA");
 		
