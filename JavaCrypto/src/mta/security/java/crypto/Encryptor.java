@@ -69,11 +69,24 @@ public class Encryptor {
 			
 			File file = getConfigurationFile();
 			
-			writeConfigurationFile(file, signatureBytes);
+			writeSecureFile(file, signatureBytes);
+			
+			file = getEncodedFile();
+			
+			writeSecureFile(file, cipherText);
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private static File getEncodedFile() {
+		File file = new File(Encryptor.class.getResource("/").getPath() + "/encodedMessage.txt");
+		return file;
 	}
 
 	/**
@@ -87,7 +100,7 @@ public class Encryptor {
 	 * @throws IOException
 	 * @throws NoSuchProviderException 
 	 */
-	private static void writeConfigurationFile(File file, byte[] signatureBytes) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, FileNotFoundException, IOException, NoSuchProviderException {
+	private static void writeSecureFile(File file, byte[] signatureBytes) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, FileNotFoundException, IOException, NoSuchProviderException {
 		// TODO get secret key?
 		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
 		 keyGen.init(128);
