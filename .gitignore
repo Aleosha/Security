@@ -41,3 +41,14 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+.metadata/version.ini
+.metadata/.lock
+.metadata/.log
+.metadata/.mylyn/.taskListIndex/segments.gen
+.metadata/.mylyn/.taskListIndex/segments_1
+.metadata/.mylyn/repositories.xml.zip
+.metadata/.plugins/com.google.appengine.eclipse.core/appengine-sdk-proxy.jar
+.metadata/.plugins/com.google.appengine.eclipse.core/appengine-tools-api.jar
+.metadata/.plugins/org.eclipse.cdt.make.core/specs.c
+.metadata/.plugins/org.eclipse.m2e.logback.configuration/0.log
