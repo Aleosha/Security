@@ -1,5 +1,7 @@
 package mta.security.java.crypto;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -18,6 +20,7 @@ import java.security.SignatureException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
@@ -48,39 +51,31 @@ public class Encryptor {
 			// Digest file
 			byte[] digest = digestContent(content);
 			
-			// Cypher
-			byte[] cypher = cypherDigest(digest, privateKey);
+			// cipher
+			byte[] cipherText = cipherDigest(digest, privateKey);
+			
+			Cipher cipher = Cipher.getInstance("AES");
+			
+			URL configurationFile = Encryptor.class.getResource("/configuration.txt");
+			String path = configurationFile.getPath();
+			File file = new File(path);
+			try (FileOutputStream outputStream = new FileOutputStream(file))
+			{
+				try (CipherOutputStream cipherStream = new CipherOutputStream(outputStream, cipher))
+				{
+					cipherStream.write(signatureBytes);
+				}
+			}
 			
 			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SignatureException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BadPaddingException e) {
-			// TODO Auto-generated catch block
+		} 
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * Get cypher from digest
+	 * Get cipher from digest
 	 * @param digest
 	 * @param privateKey
 	 * @return
@@ -90,13 +85,13 @@ public class Encryptor {
 	 * @throws IllegalBlockSizeException
 	 * @throws BadPaddingException
 	 */
-	private static byte[] cypherDigest(byte[] digest, Key privateKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+	private static byte[] cipherDigest(byte[] digest, Key privateKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 		Cipher cipher = Cipher.getInstance("RSA");
 		cipher.init(Cipher.ENCRYPT_MODE, privateKey);
-		byte[] cypherText = cipher.doFinal(digest);
+		byte[] cipherText = cipher.doFinal(digest);
 		
-		System.out.println("Cypher text: " + new String(cypherText));
-		return cypherText;
+		System.out.println("cipher text: " + new String(cipherText));
+		return cipherText;
 	}
 
 	/**
