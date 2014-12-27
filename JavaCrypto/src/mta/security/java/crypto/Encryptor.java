@@ -35,22 +35,13 @@ public class Encryptor {
 	// Provider that we're using
 	private static final String PROVIDER = "SUN";
 	
-	// Path to the file we're encoding
-	private static final String FLAT_FILE_PATH = "/message.txt";
 
 	public static void main(String[] args) {
 		
 		
 		try {
 			
-			byte[] content = null;
-			// Read flat file into byte array
-			URL messageAsResource = Encryptor.class.getResource(FLAT_FILE_PATH);
-			if (messageAsResource != null) {
-				URI uri = messageAsResource.toURI();
-				content = Files.readAllBytes(Paths.get(uri));
-				System.out.println("The message to encrypt is:" + new String(content));
-			}
+			byte[] content = FileProvider.getFlatFile();
 			
 			// Generate key pair
 			// TODO get keypair from keystore
@@ -67,11 +58,14 @@ public class Encryptor {
 			byte[] cipherText = cipherDigest(content, privateKey);
 			KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 			
-			File file = getConfigurationFile();
+			File file = FileProvider.getConfigurationFile();
 			
-			writeSecureFile(file, signatureBytes);
+			try (FileOutputStream outputStream = new FileOutputStream(file)) {
+				outputStream.write(signatureBytes);
+			}
 			
-			file = getEncodedFile();
+			
+			file = FileProvider.getEncryptedFile();
 			
 			writeSecureFile(file, cipherText);
 		} 
@@ -80,14 +74,7 @@ public class Encryptor {
 		}
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	private static File getEncodedFile() {
-		File file = new File(Encryptor.class.getResource("/").getPath() + "/encodedMessage.txt");
-		return file;
-	}
+	
 
 	/**
 	 * 
@@ -118,24 +105,6 @@ public class Encryptor {
 				cipherStream.write(signatureBytes);
 			}
 		}
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	private static File getConfigurationFile() {
-		File file = null;
-		URL configurationFile = Encryptor.class.getResource("/configuration.txt");
-		if (configurationFile == null) {
-			file = new File(Encryptor.class.getResource("/").getPath() + "configuration.txt");
-		}
-		else {
-			String path = configurationFile.getPath();
-			file = new File(path);
-		}
-		
-		return file;
 	}
 
 	/**
