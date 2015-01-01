@@ -1,5 +1,14 @@
-Keystore commands:
+Keystore commands
 
 Encryptor side:
+// Encryptor creates keypair
+keytool -genkeypair -alias encryptor -keystore C:\temp\keystore.jks
 
-Descryptor side:
+Decryptor side, create keypair
+keytool -genkeypair -alias decryptor -keyalg RSA -keystore C:\temp\keystore2.jks
+
+Decryptor side, export certificate
+keytool -exportcert -keystore C:\temp\keystore2.jks -alias decryptor -file C:\temp\decryptor.cer
+
+Encryptor side, import certificate
+keytool -importcert -alias decryptor -file C:\temp\decryptor.cer -keypass abcd1234 -keystore C:\temp\keystore.jks -storepass abcd1234

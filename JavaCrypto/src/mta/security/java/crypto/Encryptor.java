@@ -1,6 +1,7 @@
 package mta.security.java.crypto;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -20,6 +22,8 @@ import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -46,17 +50,22 @@ public class Encryptor {
 			// Generate key pair
 			// TODO get keypair from keystore
 			KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-			PrivateKey privateKey = keyPair.getPrivate();
+			//PrivateKey privateKey = keyPair.getPrivate();
 			
+			Key privateKey = getPrivateKey();
 			// Get signature for the file
 			byte[] signatureBytes = signContent(content, privateKey);
 			
 			// Digest file
 			byte[] digest = digestContent(content);
 			
+			Key publicKey = getPublicKey();
+			
 			// cipher content
-			byte[] cipherText = cipherDigest(content, privateKey);
-			KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+			byte[] cipherText = cipher(content, publicKey);
+			
+		
+			
 			
 			File file = FileProvider.getConfigurationFile();
 			
@@ -67,7 +76,9 @@ public class Encryptor {
 			
 			file = FileProvider.getEncryptedFile();
 			
-			writeSecureFile(file, cipherText);
+			SecretKey secretKey = writeSecureFile(file, cipherText);
+			
+			byte[] secretKeyCipher = cipher(secretKey.getEncoded(), publicKey);
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -76,10 +87,36 @@ public class Encryptor {
 
 	
 
+	private static Key getPublicKey() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException {
+		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		File file = new File("C:\\temp\\keystore.jks");
+		
+		FileInputStream keystoreFile = new FileInputStream(file);
+		keyStore.load(keystoreFile, "abcd1234".toCharArray());
+		
+		return keyStore.getCertificate("decryptor").getPublicKey();
+	}
+
+
+
+	private static Key getPrivateKey() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException {
+		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		File file = new File("C:\\temp\\keystore.jks");
+		
+		FileInputStream keystoreFile = new FileInputStream(file);
+		keyStore.load(keystoreFile, "abcd1234".toCharArray());
+		Key k = keyStore.getKey("encryptor", "abcd1234".toCharArray());
+		
+		return k;
+	}
+
+
+
 	/**
 	 * 
 	 * @param file
 	 * @param signatureBytes
+	 * @return 
 	 * @throws NoSuchAlgorithmException
 	 * @throws NoSuchPaddingException
 	 * @throws InvalidKeyException
@@ -87,7 +124,7 @@ public class Encryptor {
 	 * @throws IOException
 	 * @throws NoSuchProviderException 
 	 */
-	private static void writeSecureFile(File file, byte[] signatureBytes) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, FileNotFoundException, IOException, NoSuchProviderException {
+	private static SecretKey writeSecureFile(File file, byte[] signatureBytes) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, FileNotFoundException, IOException, NoSuchProviderException {
 		// TODO get secret key?
 		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
 		 keyGen.init(128);
@@ -105,12 +142,14 @@ public class Encryptor {
 				cipherStream.write(signatureBytes);
 			}
 		}
+		
+		return secretKey;
 	}
 
 	/**
 	 * Get cipher from digest
 	 * @param digest
-	 * @param privateKey
+	 * @param publicKey
 	 * @return
 	 * @throws NoSuchAlgorithmException
 	 * @throws NoSuchPaddingException
@@ -119,9 +158,9 @@ public class Encryptor {
 	 * @throws BadPaddingException
 	 * @throws NoSuchProviderException 
 	 */
-	private static byte[] cipherDigest(byte[] content, Key privateKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException {
+	private static byte[] cipher(byte[] content, Key publicKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException {
 		Cipher cipher = Cipher.getInstance("RSA");
-		cipher.init(Cipher.ENCRYPT_MODE, privateKey);
+		cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 		
 		byte[] cipherText = cipher.doFinal(content);
 		
@@ -153,11 +192,11 @@ public class Encryptor {
 	 * @throws SignatureException
 	 * @throws NoSuchProviderException 
 	 */
-	private static byte[] signContent(byte[] content, PrivateKey privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, NoSuchProviderException {
+	private static byte[] signContent(byte[] content, Key privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, NoSuchProviderException {
 		byte[] signatureBytes;
-		Signature signature = Signature.getInstance("SHA1withRSA");
+		Signature signature = Signature.getInstance("SHA1withDSA");
 		
-		signature.initSign(privateKey);
+		signature.initSign((PrivateKey) privateKey);
 		signature.update(content);
 		
 		signatureBytes = signature.sign();
