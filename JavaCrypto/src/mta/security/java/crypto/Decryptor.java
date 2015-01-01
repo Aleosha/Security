@@ -13,8 +13,12 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
 import javax.crypto.BadPaddingException;
@@ -42,7 +46,18 @@ public class Decryptor {
 	        String decryptedValue = new String(decValue);
 			
 			System.out.println(decryptedValue);
-		} catch (URISyntaxException | IOException | UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException | CertificateException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | NoSuchProviderException e1) {
+			byte[] signature = FileProvider.getSignatureFileAsBytes();
+			System.out.println("Signature is:"+new String(signature));
+			Signature signatureValidator = Signature.getInstance("SHA1withDSA");
+			signatureValidator.initVerify( getPublicKey());
+			signatureValidator.update(decValue);
+			if (signatureValidator.verify(signature)) {
+				System.out.println("Signature is valid");
+			}
+			else {
+				System.out.println("Invalid signature");
+			}
+		} catch (URISyntaxException | IOException | UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException | CertificateException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | NoSuchProviderException | SignatureException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -71,4 +86,15 @@ public class Decryptor {
 		System.out.println("Cipher text: " + new String(cipherText));
 		return cipherText;
 	}
+	
+	private static PublicKey getPublicKey() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException {
+		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		File file = new File("C:\\temp\\keystore2.jks");
+		
+		FileInputStream keystoreFile = new FileInputStream(file);
+		keyStore.load(keystoreFile, "abcd1234".toCharArray());
+		
+		return keyStore.getCertificate("encryptor").getPublicKey();
+	}
+
 }

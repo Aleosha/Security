@@ -12,3 +12,9 @@ keytool -exportcert -keystore C:\temp\keystore2.jks -alias decryptor -file C:\te
 
 Encryptor side, import certificate
 keytool -importcert -alias decryptor -file C:\temp\decryptor.cer -keypass abcd1234 -keystore C:\temp\keystore.jks -storepass abcd1234
+
+Encryptor side, export certificate
+keytool -exportcert -keystore C:\temp\keystore.jks -alias encryptor -file C:\temp\encryptor.cer
+
+Decryptor side, import certificate
+keytool -importcert -alias encryptor -file C:\temp\encryptor.cer -keypass abcd1234 -keystore C:\temp\keystore2.jks -storepass abcd1234

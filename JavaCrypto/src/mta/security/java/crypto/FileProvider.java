@@ -72,4 +72,8 @@ public class FileProvider {
 		}
 		return content;
 	}
+
+	public static byte[] getSignatureFileAsBytes() throws URISyntaxException, IOException {
+		return getFile("/signature.txt");
+	}
 }
