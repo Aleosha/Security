@@ -46,28 +46,14 @@ public class Encryptor {
 		
 		try {
 			
-			byte[] content = FileProvider.getFlatFile();
-			
-			// Generate key pair
-			// TODO get keypair from keystore
-			KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-			//PrivateKey privateKey = keyPair.getPrivate();
-			
+			byte[] content = FileProvider.getFlatFileAsBytes();
+				
 			Key privateKey = getPrivateKey();
 			// Get signature for the file
 			byte[] signatureBytes = signContent(content, privateKey);
 			
-			// Digest file
-			byte[] digest = digestContent(content);
-			
 			Key publicKey = getPublicKey();
-			
-			// cipher content
-			byte[] cipherText = cipher(content, publicKey);
-			
-		
-			
-			
+				
 			File configurationFile = FileProvider.getSignatureConfigurationFile();
 			
 			try (FileOutputStream outputStream = new FileOutputStream(configurationFile)) {
@@ -77,7 +63,7 @@ public class Encryptor {
 			
 			File encryptedFile = FileProvider.getEncryptedFile();
 			
-			SecretKey secretKey = writeSecureFile(encryptedFile, cipherText);
+			SecretKey secretKey = writeSecureFile(encryptedFile, content);
 			
 			configurationFile = FileProvider.getSecretConfigurationFile();
 			

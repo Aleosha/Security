@@ -13,13 +13,14 @@ public class FileProvider {
 
 	// Path to the file we're encoding
 	private static final String FLAT_FILE_PATH = "/message.txt";
+	private final static String SECRET_FILE_PATH = FileProvider.class.getResource("/").getPath() + "/secret.txt";
 
 	/**
 	 * Get the encrypted file
 	 * @return
 	 */
 	static File getEncryptedFile() {
-		File file = new File(Encryptor.class.getResource("/").getPath() + "/encodedMessage.txt");
+		File file = new File(FileProvider.class.getResource("/").getPath() + "/encodedMessage.txt");
 		return file;
 	}
 	
@@ -28,13 +29,13 @@ public class FileProvider {
 	 * @return
 	 */
 	static File getSignatureConfigurationFile() {
-		File file = new File(Encryptor.class.getResource("/").getPath() + "/signature.txt");
+		File file = new File(FileProvider.class.getResource("/").getPath() + "/signature.txt");
 		
 		return file;
 	}
 	
 	static File getSecretConfigurationFile() {
-		File file = new File(Encryptor.class.getResource("/").getPath() + "/secret.txt");
+		File file = new File(SECRET_FILE_PATH);
 		
 		return file;
 	}
@@ -45,14 +46,29 @@ public class FileProvider {
 	 * @throws URISyntaxException
 	 * @throws IOException
 	 */
-	public static byte[] getFlatFile() throws URISyntaxException, IOException {
+	public static byte[] getFlatFileAsBytes() throws URISyntaxException, IOException {
+		return getFile(FLAT_FILE_PATH);
+	}
+	
+	public static byte[] getSecretFileAsBytes() throws URISyntaxException, IOException {
+		
+		return getFile("/secret.txt");
+	}
+	
+	public static byte[] getEncryptedFileAsBytes() throws URISyntaxException, IOException {
+		
+		return getFile("/encodedMessage.txt");
+	}
+	
+	public static byte[] getFile(String path) throws URISyntaxException, IOException
+	{
 		byte[] content = null;
 		// Read flat file into byte array
-		URL messageAsResource = Encryptor.class.getResource(FLAT_FILE_PATH);
+		URL messageAsResource = Encryptor.class.getResource(path);
+		
 		if (messageAsResource != null) {
 			URI uri = messageAsResource.toURI();
 			content = Files.readAllBytes(Paths.get(uri));
-			System.out.println("The message to encrypt is:" + new String(content));
 		}
 		return content;
 	}
