@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
@@ -67,18 +68,24 @@ public class Encryptor {
 		
 			
 			
-			File file = FileProvider.getConfigurationFile();
+			File configurationFile = FileProvider.getSignatureConfigurationFile();
 			
-			try (FileOutputStream outputStream = new FileOutputStream(file)) {
+			try (FileOutputStream outputStream = new FileOutputStream(configurationFile)) {
 				outputStream.write(signatureBytes);
 			}
 			
 			
-			file = FileProvider.getEncryptedFile();
+			File encryptedFile = FileProvider.getEncryptedFile();
 			
-			SecretKey secretKey = writeSecureFile(file, cipherText);
+			SecretKey secretKey = writeSecureFile(encryptedFile, cipherText);
+			
+			configurationFile = FileProvider.getSecretConfigurationFile();
 			
 			byte[] secretKeyCipher = cipher(secretKey.getEncoded(), publicKey);
+			
+			try (FileOutputStream outputStream = new FileOutputStream(configurationFile)) {
+				outputStream.write(secretKeyCipher);
+			}
 		} 
 		catch (Exception e) {
 			e.printStackTrace();

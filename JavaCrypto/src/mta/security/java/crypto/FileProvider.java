@@ -27,8 +27,14 @@ public class FileProvider {
 	 * Get the configuration file
 	 * @return
 	 */
-	static File getConfigurationFile() {
-		File file = new File(Encryptor.class.getResource("/").getPath() + "/configuration.txt");
+	static File getSignatureConfigurationFile() {
+		File file = new File(Encryptor.class.getResource("/").getPath() + "/signature.txt");
+		
+		return file;
+	}
+	
+	static File getSecretConfigurationFile() {
+		File file = new File(Encryptor.class.getResource("/").getPath() + "/secret.txt");
 		
 		return file;
 	}
