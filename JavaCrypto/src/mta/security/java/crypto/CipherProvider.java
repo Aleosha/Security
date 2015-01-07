@@ -22,7 +22,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class CipherProvider {
 	
-	private static final String CIPHER_ALGORITHM = "RSA";
+	private static final String ASYMMETRIC_ALGORITHM = "RSA";
 	
 	// Provider that we're using
 	private static final String PROVIDER = "SUN";
@@ -32,7 +32,7 @@ public class CipherProvider {
 	private static final String SYMMETRIC_ALGORITHM = "AES";
 
 	public static byte[] decipher(byte[] content, Key privateKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException {
-		Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
+		Cipher cipher = Cipher.getInstance(ASYMMETRIC_ALGORITHM);
 		cipher.init(Cipher.DECRYPT_MODE, privateKey);
 		
 		byte[] cipherText = cipher.doFinal(content);
@@ -53,7 +53,7 @@ public class CipherProvider {
 	 * @throws NoSuchProviderException 
 	 */
 	public static byte[] cipher(byte[] content, Key publicKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException {
-		Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
+		Cipher cipher = Cipher.getInstance(ASYMMETRIC_ALGORITHM);
 		cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 		
 		byte[] cipherText = cipher.doFinal(content);

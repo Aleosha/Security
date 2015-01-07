@@ -12,15 +12,21 @@ public class FileProvider {
 	
 
 	// Path to the file we're encoding
-	private static final String FLAT_FILE_PATH = "/message.txt";
-	private final static String SECRET_FILE_PATH = FileProvider.class.getResource("/").getPath() + "/secret.txt";
+	private static final String FLAT_FILE_NAME = "/message.txt";
+	private final static String SECRET_FILE_NAME = "/secret.txt";
+	private static final String ENCODED_FILE_NAME = "/encodedMessage.txt";
+	private static final String SIGNATURE_FILE_NAME = "/signature.txt";
+	
+	private final static String SECRET_FILE_PATH = FileProvider.class.getResource("/").getPath() + SECRET_FILE_NAME;
+	
+	
 
 	/**
 	 * Get the encrypted file
 	 * @return
 	 */
 	static File getEncryptedFile() {
-		File file = new File(FileProvider.class.getResource("/").getPath() + "/encodedMessage.txt");
+		File file = new File(FileProvider.class.getResource("/").getPath() + ENCODED_FILE_NAME);
 		return file;
 	}
 	
@@ -29,7 +35,7 @@ public class FileProvider {
 	 * @return
 	 */
 	static File getSignatureConfigurationFile() {
-		File file = new File(FileProvider.class.getResource("/").getPath() + "/signature.txt");
+		File file = new File(FileProvider.class.getResource("/").getPath() + SIGNATURE_FILE_NAME);
 		
 		return file;
 	}
@@ -47,17 +53,17 @@ public class FileProvider {
 	 * @throws IOException
 	 */
 	public static byte[] getFlatFileAsBytes() throws URISyntaxException, IOException {
-		return getFile(FLAT_FILE_PATH);
+		return getFile(FLAT_FILE_NAME);
 	}
 	
 	public static byte[] getSecretFileAsBytes() throws URISyntaxException, IOException {
 		
-		return getFile("/secret.txt");
+		return getFile(SECRET_FILE_NAME);
 	}
 	
 	public static byte[] getEncryptedFileAsBytes() throws URISyntaxException, IOException {
 		
-		return getFile("/encodedMessage.txt");
+		return getFile(ENCODED_FILE_NAME);
 	}
 	
 	public static byte[] getFile(String path) throws URISyntaxException, IOException
@@ -74,6 +80,6 @@ public class FileProvider {
 	}
 
 	public static byte[] getSignatureFileAsBytes() throws URISyntaxException, IOException {
-		return getFile("/signature.txt");
+		return getFile(SIGNATURE_FILE_NAME);
 	}
 }

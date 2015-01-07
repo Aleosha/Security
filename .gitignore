@@ -43,3 +43,10 @@ Temporary Items
 .apdisk
 
 .metadata/*
+GuyJavaCrypto/src/javacryptob/Main.java
+GuyJavaCrypto/.classpath
+GuyJavaCrypto/.project
+GuyJavaCrypto/.settings/org.eclipse.jdt.core.prefs
+GuyJavaCrypto/src/javacrypto/Encrypt.java
+GuyJavaCrypto/src/javacrypto/Main.java
+GuyJavaCrypto/src/javacryptob/Decrypt.java
