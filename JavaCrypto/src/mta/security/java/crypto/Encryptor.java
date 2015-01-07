@@ -27,13 +27,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
 
-public class Encryptor {
-
-	// Provider that we're using
-	private static final String PROVIDER = "SUN";
-
-	private static final String RANDOM_ALGORITHM = "SHA1PRNG";
-	
+public class Encryptor {	
 
 	public static void main(String[] args) {
 		
@@ -57,7 +51,7 @@ public class Encryptor {
 			
 			File encryptedFile = FileProvider.getEncryptedFile();
 			
-			SecretKey secretKey = writeSecureFile(encryptedFile, content);
+			SecretKey secretKey = CipherProvider.writeSecureFile(encryptedFile, content);
 			
 			configurationFile = FileProvider.getSecretConfigurationFile();
 			
@@ -73,41 +67,4 @@ public class Encryptor {
 			e.printStackTrace();
 		}
 	}
-
-	/**
-	 * 
-	 * @param file
-	 * @param signatureBytes
-	 * @return 
-	 * @throws NoSuchAlgorithmException
-	 * @throws NoSuchPaddingException
-	 * @throws InvalidKeyException
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 * @throws NoSuchProviderException 
-	 */
-	private static SecretKey writeSecureFile(File file, byte[] signatureBytes) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, FileNotFoundException, IOException, NoSuchProviderException {
-
-		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-		keyGen.init(128);
-		SecretKey secretKey = keyGen.generateKey();
-       
-		Cipher cipher = Cipher.getInstance("AES");
-		
-		SecureRandom secureRandom = SecureRandom.getInstance(RANDOM_ALGORITHM, PROVIDER);
-		cipher.init(Cipher.ENCRYPT_MODE, secretKey, secureRandom);
-		
-		try (FileOutputStream outputStream = new FileOutputStream(file))
-		{
-			try (CipherOutputStream cipherStream = new CipherOutputStream(outputStream, cipher))
-			{
-				cipherStream.write(signatureBytes);
-			}
-		}
-		
-		return secretKey;
-	}
-
-
-
 }
