@@ -16,10 +16,22 @@ public class SignatureProvider {
 
 	private static final String SIGNATURE_ALGORITHM = "SHA1withDSA";
 	
-	public static boolean verify(byte[] decValue, byte[] signature) throws InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, SignatureException {
+	/**
+	 * 
+	 * @param decodedValue
+	 * @param signature
+	 * @return
+	 * @throws InvalidKeyException
+	 * @throws KeyStoreException
+	 * @throws NoSuchAlgorithmException
+	 * @throws CertificateException
+	 * @throws IOException
+	 * @throws SignatureException
+	 */
+	public static boolean verify(byte[] decodedValue, byte[] signature) throws InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, SignatureException {
 		Signature signatureValidator = Signature.getInstance(SIGNATURE_ALGORITHM);
 		signatureValidator.initVerify( (PublicKey) KeyProvider.getPublicKey(Sides.DECRYPTOR));
-		signatureValidator.update(decValue);
+		signatureValidator.update(decodedValue);
 		return signatureValidator.verify(signature);		
 	}
 
