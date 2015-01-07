@@ -31,6 +31,8 @@ public class Encryptor {
 
 	// Provider that we're using
 	private static final String PROVIDER = "SUN";
+	private static final String SIGNATURE_ALGORITHM = "SHA1withDSA";
+	private static final String RANDOM_ALGORITHM = "SHA1PRNG";
 	
 
 	public static void main(String[] args) {
@@ -64,6 +66,8 @@ public class Encryptor {
 			try (FileOutputStream outputStream = new FileOutputStream(configurationFile)) {
 				outputStream.write(secretKeyCipher);
 			}
+			
+			System.out.println("Encryption completed");
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -83,14 +87,14 @@ public class Encryptor {
 	 * @throws NoSuchProviderException 
 	 */
 	private static SecretKey writeSecureFile(File file, byte[] signatureBytes) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, FileNotFoundException, IOException, NoSuchProviderException {
-		// TODO get secret key?
+
 		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-		 keyGen.init(128);
+		keyGen.init(128);
 		SecretKey secretKey = keyGen.generateKey();
        
 		Cipher cipher = Cipher.getInstance("AES");
 		
-		SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG", PROVIDER);
+		SecureRandom secureRandom = SecureRandom.getInstance(RANDOM_ALGORITHM, PROVIDER);
 		cipher.init(Cipher.ENCRYPT_MODE, secretKey, secureRandom);
 		
 		try (FileOutputStream outputStream = new FileOutputStream(file))
@@ -122,7 +126,6 @@ public class Encryptor {
 		
 		byte[] cipherText = cipher.doFinal(content);
 		
-		System.out.println("Cipher text: " + new String(cipherText));
 		return cipherText;
 	}
 
@@ -138,14 +141,12 @@ public class Encryptor {
 	 */
 	private static byte[] signContent(byte[] content, Key privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, NoSuchProviderException {
 		byte[] signatureBytes;
-		Signature signature = Signature.getInstance("SHA1withDSA");
+		Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
 		
 		signature.initSign((PrivateKey) privateKey);
 		signature.update(content);
 		
-		signatureBytes = signature.sign();
-		
-		System.out.println("Signature is:" + new String(signatureBytes));
+		signatureBytes = signature.sign();		
 		
 		return signatureBytes;
 	}

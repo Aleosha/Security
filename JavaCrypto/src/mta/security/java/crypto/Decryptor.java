@@ -1,24 +1,16 @@
 package mta.security.java.crypto;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
 import javax.crypto.BadPaddingException;
@@ -33,8 +25,8 @@ public class Decryptor {
 		try {
 			byte[] encryptedSecretKey = FileProvider.getSecretFileAsBytes();
 			Key privateKey = KeyProvider.getPrivateKey(Sides.DECRYPTOR);
-			byte[] decryptedSecretKey = decipher(encryptedSecretKey, privateKey);
-			System.out.println(new String(decryptedSecretKey));
+			byte[] decryptedSecretKey = CipherProvider.decipher(encryptedSecretKey, privateKey);
+			
 			byte[] encryptedFile = FileProvider.getEncryptedFileAsBytes();
 			
 		
@@ -49,7 +41,7 @@ public class Decryptor {
 			byte[] signature = FileProvider.getSignatureFileAsBytes();
 
 			Signature signatureValidator = Signature.getInstance("SHA1withDSA");
-			signatureValidator.initVerify( getPublicKey());
+			signatureValidator.initVerify( (PublicKey) KeyProvider.getPublicKey(Sides.DECRYPTOR));
 			signatureValidator.update(decValue);
 			if (signatureValidator.verify(signature)) {
 				System.out.println("Signature is valid");
@@ -62,29 +54,4 @@ public class Decryptor {
 			e1.printStackTrace();
 		}
 	}
-
-	
-
-
-	//TODO refactor!!!
-	private static byte[] decipher(byte[] content, Key privateKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException {
-		Cipher cipher = Cipher.getInstance("RSA");
-		cipher.init(Cipher.DECRYPT_MODE, privateKey);
-		
-		byte[] cipherText = cipher.doFinal(content);
-		
-		System.out.println("Cipher text: " + new String(cipherText));
-		return cipherText;
-	}
-	
-	private static PublicKey getPublicKey() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException {
-		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-		File file = new File("C:\\temp\\keystore2.jks");
-		
-		FileInputStream keystoreFile = new FileInputStream(file);
-		keyStore.load(keystoreFile, "abcd1234".toCharArray());
-		
-		return keyStore.getCertificate("encryptor").getPublicKey();
-	}
-
 }
