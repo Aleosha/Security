@@ -2,6 +2,7 @@ package mta.security.java.crypto;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Paths;
 import java.security.Key;
 
 import javax.crypto.SecretKey;
@@ -13,8 +14,21 @@ public class Encryptor {
 		
 		
 		try {
+			byte[] content = null;
+			String path = args[0];
+			if (args.length >= 1) {				
+				File fileToEncrypt = new File(path);
+				if (!fileToEncrypt.isFile()) {
+					throw new IllegalArgumentException("File name is not valid");
+				}
+				else {
+					content = FileProvider.getFile(path);
+				}
+			}
+			else {
+				content = FileProvider.getFlatFileAsBytes();	
+			}
 			
-			byte[] content = FileProvider.getFlatFileAsBytes();
 				
 			Key privateKey = KeyProvider.getPrivateKey(Sides.ENCRYPTOR);
 			// Get signature for the file

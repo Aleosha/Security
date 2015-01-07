@@ -76,6 +76,9 @@ public class FileProvider {
 			URI uri = messageAsResource.toURI();
 			content = Files.readAllBytes(Paths.get(uri));
 		}
+		else {
+			content = Files.readAllBytes(Paths.get(path));
+		}
 		return content;
 	}
 
