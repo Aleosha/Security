@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -18,6 +19,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class CipherProvider {
@@ -30,6 +32,8 @@ public class CipherProvider {
 	private static final String RANDOM_ALGORITHM = "SHA1PRNG";
 
 	private static final String SYMMETRIC_ALGORITHM = "AES";
+
+	private static final String SYMMETRIC_ALGORITHM_WITH_MODE = SYMMETRIC_ALGORITHM + "/" + "CBC" + "/" + "PKCS5Padding";
 
 	public static byte[] decipher(byte[] content, Key privateKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException {
 		Cipher cipher = Cipher.getInstance(ASYMMETRIC_ALGORITHM);
@@ -61,10 +65,12 @@ public class CipherProvider {
 		return cipherText;
 	}
 
-	public static byte[] decipher(byte[] encryptedFile, byte[] decryptedSecretKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+	public static byte[] decipher(byte[] encryptedFile, byte[] decryptedSecretKey, byte[] iv) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
 		SecretKey k = new SecretKeySpec(decryptedSecretKey, SYMMETRIC_ALGORITHM);
-        Cipher c = Cipher.getInstance(SYMMETRIC_ALGORITHM);
-        c.init(Cipher.DECRYPT_MODE, k);
+        Cipher c = Cipher.getInstance(SYMMETRIC_ALGORITHM_WITH_MODE);
+        IvParameterSpec ivspec = new IvParameterSpec(iv);
+
+        c.init(Cipher.DECRYPT_MODE, k, ivspec);
         
         byte[] decValue = c.doFinal(encryptedFile);
         
@@ -82,17 +88,22 @@ public class CipherProvider {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 * @throws NoSuchProviderException 
+	 * @throws InvalidAlgorithmParameterException 
 	 */
-	public static SecretKey writeSecureFile(File file, byte[] signatureBytes) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, FileNotFoundException, IOException, NoSuchProviderException {
+	public static SecretKeyHolder writeSecureFile(File file, byte[] signatureBytes) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, FileNotFoundException, IOException, NoSuchProviderException, InvalidAlgorithmParameterException {
 
 		KeyGenerator keyGen = KeyGenerator.getInstance(SYMMETRIC_ALGORITHM);
 		keyGen.init(128);
 		SecretKey secretKey = keyGen.generateKey();
        
-		Cipher cipher = Cipher.getInstance(SYMMETRIC_ALGORITHM);
+		Cipher cipher = Cipher.getInstance(SYMMETRIC_ALGORITHM_WITH_MODE);
 		
 		SecureRandom secureRandom = SecureRandom.getInstance(RANDOM_ALGORITHM, PROVIDER);
-		cipher.init(Cipher.ENCRYPT_MODE, secretKey, secureRandom);
+		byte[] iv = new byte[16];	
+		SecureRandom prng = new SecureRandom();
+		prng.nextBytes(iv);
+
+		cipher.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(iv));
 		
 		try (FileOutputStream outputStream = new FileOutputStream(file))
 		{
@@ -102,6 +113,9 @@ public class CipherProvider {
 			}
 		}
 		
-		return secretKey;
+		
+		
+		return new SecretKeyHolder(secretKey, secureRandom, iv);
 	}
+
 }

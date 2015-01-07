@@ -16,10 +16,9 @@ public class FileProvider {
 	private final static String SECRET_FILE_NAME = "/secret.txt";
 	private static final String ENCODED_FILE_NAME = "/encodedMessage.txt";
 	private static final String SIGNATURE_FILE_NAME = "/signature.txt";
+	private static final String IV_FILE = "/iv.txt";
 	
-	private final static String SECRET_FILE_PATH = FileProvider.class.getResource("/").getPath() + SECRET_FILE_NAME;
-	
-	
+	private final static String SECRET_FILE_PATH = FileProvider.class.getResource("/").getPath() + SECRET_FILE_NAME;	
 
 	/**
 	 * Get the encrypted file
@@ -84,5 +83,15 @@ public class FileProvider {
 
 	public static byte[] getSignatureFileAsBytes() throws URISyntaxException, IOException {
 		return getFile(SIGNATURE_FILE_NAME);
+	}
+
+	public static byte[] getIv() throws URISyntaxException, IOException {
+		return getFile(IV_FILE);
+	}
+
+	public static File getIvConfigurationFile() {
+		File file = new File(FileProvider.class.getResource("/").getPath() + IV_FILE);
+		
+		return file;
 	}
 }

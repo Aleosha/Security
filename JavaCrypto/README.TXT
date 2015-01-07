@@ -15,3 +15,7 @@ If no argument is provided, it will use \resources\the message.txt file as an ex
 In addition to encodedMessage.txt two more files are created in the same directory:
 secret.txt - contains the secret key for the message
 signature.txt - contains the signature for the message
+
+Decryptor reads encodedMessage.txt, secret.txt and signature.txt from the \bin directory, and outputs:
+1. The decoded message
+2. Whether the signature on the file is valid or not

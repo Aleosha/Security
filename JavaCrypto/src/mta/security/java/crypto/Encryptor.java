@@ -45,14 +45,22 @@ public class Encryptor {
 			
 			File encryptedFile = FileProvider.getEncryptedFile();
 			
-			SecretKey secretKey = CipherProvider.writeSecureFile(encryptedFile, content);
+			SecretKeyHolder secretKeyHolder = CipherProvider.writeSecureFile(encryptedFile, content);
 			
 			configurationFile = FileProvider.getSecretConfigurationFile();
 			
-			byte[] secretKeyCipher = CipherProvider.cipher(secretKey.getEncoded(), publicKey);
+			byte[] secretKeyCipher = CipherProvider.cipher(secretKeyHolder.getSecretKey().getEncoded(), publicKey);
 			
 			try (FileOutputStream outputStream = new FileOutputStream(configurationFile)) {
 				outputStream.write(secretKeyCipher);
+			}
+			
+			configurationFile = FileProvider.getIvConfigurationFile();
+			
+			byte[] ivCipher = CipherProvider.cipher(secretKeyHolder.getIv(), publicKey);
+			
+			try (FileOutputStream outputStream = new FileOutputStream(configurationFile)) {
+				outputStream.write(ivCipher);
 			}
 			
 			System.out.println("Encryption completed");

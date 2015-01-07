@@ -2,6 +2,7 @@ package mta.security.java.crypto;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyStoreException;
@@ -24,8 +25,10 @@ public class Decryptor {
 			byte[] decryptedSecretKey = CipherProvider.decipher(encryptedSecretKey, privateKey);
 			
 			byte[] encryptedFile = FileProvider.getEncryptedFileAsBytes();
+			byte[] iv = FileProvider.getIv();
+			iv = CipherProvider.decipher(iv, privateKey);
 							
-	        byte[] decValue = CipherProvider.decipher(encryptedFile, decryptedSecretKey);
+	        byte[] decValue = CipherProvider.decipher(encryptedFile, decryptedSecretKey, iv);
 			String decryptedValue = new String(decValue );
 			
 			System.out.println("Decrypted message is:" + decryptedValue);
@@ -41,7 +44,7 @@ public class Decryptor {
 		} catch (URISyntaxException | IOException | UnrecoverableKeyException | 
 				KeyStoreException | NoSuchAlgorithmException | CertificateException | 
 				InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | 
-				BadPaddingException | NoSuchProviderException | SignatureException e1) {
+				BadPaddingException | NoSuchProviderException | SignatureException | InvalidAlgorithmParameterException e1) {
 			e1.printStackTrace();
 		}
 	}
