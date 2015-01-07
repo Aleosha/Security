@@ -32,7 +32,7 @@ public class Decryptor {
 	public static void main(String[] args) {
 		try {
 			byte[] encryptedSecretKey = FileProvider.getSecretFileAsBytes();
-			Key privateKey = getPrivateKey();
+			Key privateKey = KeyProvider.getPrivateKey(Sides.DECRYPTOR);
 			byte[] decryptedSecretKey = decipher(encryptedSecretKey, privateKey);
 			System.out.println(new String(decryptedSecretKey));
 			byte[] encryptedFile = FileProvider.getEncryptedFileAsBytes();
@@ -45,9 +45,9 @@ public class Decryptor {
 	        byte[] decValue = c.doFinal(encryptedFile);
 	        String decryptedValue = new String(decValue);
 			
-			System.out.println(decryptedValue);
+			System.out.println("Decrypted message is:" + decryptedValue);
 			byte[] signature = FileProvider.getSignatureFileAsBytes();
-			System.out.println("Signature is:"+new String(signature));
+
 			Signature signatureValidator = Signature.getInstance("SHA1withDSA");
 			signatureValidator.initVerify( getPublicKey());
 			signatureValidator.update(decValue);
@@ -64,17 +64,7 @@ public class Decryptor {
 	}
 
 	
-	//TODO refactor!!!
-	private static Key getPrivateKey() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException {
-		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-		File file = new File("C:\\temp\\keystore2.jks");
-		
-		FileInputStream keystoreFile = new FileInputStream(file);
-		keyStore.load(keystoreFile, "abcd1234".toCharArray());
-		Key k = keyStore.getKey("decryptor", "abcd1234".toCharArray());
-		
-		return k;
-	}
+
 
 	//TODO refactor!!!
 	private static byte[] decipher(byte[] content, Key privateKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException {

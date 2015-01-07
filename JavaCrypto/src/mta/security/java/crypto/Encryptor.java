@@ -5,18 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
@@ -48,11 +40,11 @@ public class Encryptor {
 			
 			byte[] content = FileProvider.getFlatFileAsBytes();
 				
-			Key privateKey = getPrivateKey();
+			Key privateKey = KeyProvider.getPrivateKey(Sides.ENCRYPTOR);
 			// Get signature for the file
 			byte[] signatureBytes = signContent(content, privateKey);
 			
-			Key publicKey = getPublicKey();
+			Key publicKey = KeyProvider.getPublicKey(Sides.ENCRYPTOR);
 				
 			File configurationFile = FileProvider.getSignatureConfigurationFile();
 			
@@ -77,33 +69,6 @@ public class Encryptor {
 			e.printStackTrace();
 		}
 	}
-
-	
-
-	private static Key getPublicKey() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException {
-		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-		File file = new File("C:\\temp\\keystore.jks");
-		
-		FileInputStream keystoreFile = new FileInputStream(file);
-		keyStore.load(keystoreFile, "abcd1234".toCharArray());
-		
-		return keyStore.getCertificate("decryptor").getPublicKey();
-	}
-
-
-
-	private static Key getPrivateKey() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException {
-		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-		File file = new File("C:\\temp\\keystore.jks");
-		
-		FileInputStream keystoreFile = new FileInputStream(file);
-		keyStore.load(keystoreFile, "abcd1234".toCharArray());
-		Key k = keyStore.getKey("encryptor", "abcd1234".toCharArray());
-		
-		return k;
-	}
-
-
 
 	/**
 	 * 
@@ -159,20 +124,6 @@ public class Encryptor {
 		
 		System.out.println("Cipher text: " + new String(cipherText));
 		return cipherText;
-	}
-
-	/**
-	 * Get digest from content
-	 * @param content
-	 * @return
-	 * @throws NoSuchAlgorithmException
-	 */
-	private static byte[] digestContent(byte[] content) throws NoSuchAlgorithmException {
-		MessageDigest sha1 = MessageDigest.getInstance("SHA1");
-		byte[] digest = sha1.digest(content);
-		
-		System.out.println("Digest is:" + new String(digest));
-		return digest;
 	}
 
 	/**
