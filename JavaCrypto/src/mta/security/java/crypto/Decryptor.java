@@ -40,10 +40,8 @@ public class Decryptor {
 			System.out.println("Decrypted message is:" + decryptedValue);
 			byte[] signature = FileProvider.getSignatureFileAsBytes();
 
-			Signature signatureValidator = Signature.getInstance("SHA1withDSA");
-			signatureValidator.initVerify( (PublicKey) KeyProvider.getPublicKey(Sides.DECRYPTOR));
-			signatureValidator.update(decValue);
-			if (signatureValidator.verify(signature)) {
+			
+			if (SignatureProvider.verify(decValue, signature)) {
 				System.out.println("Signature is valid");
 			}
 			else {

@@ -61,7 +61,7 @@ public class Encryptor {
 			
 			configurationFile = FileProvider.getSecretConfigurationFile();
 			
-			byte[] secretKeyCipher = cipher(secretKey.getEncoded(), publicKey);
+			byte[] secretKeyCipher = CipherProvider.cipher(secretKey.getEncoded(), publicKey);
 			
 			try (FileOutputStream outputStream = new FileOutputStream(configurationFile)) {
 				outputStream.write(secretKeyCipher);
@@ -108,26 +108,7 @@ public class Encryptor {
 		return secretKey;
 	}
 
-	/**
-	 * Get cipher from digest
-	 * @param digest
-	 * @param publicKey
-	 * @return
-	 * @throws NoSuchAlgorithmException
-	 * @throws NoSuchPaddingException
-	 * @throws InvalidKeyException
-	 * @throws IllegalBlockSizeException
-	 * @throws BadPaddingException
-	 * @throws NoSuchProviderException 
-	 */
-	private static byte[] cipher(byte[] content, Key publicKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException {
-		Cipher cipher = Cipher.getInstance("RSA");
-		cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-		
-		byte[] cipherText = cipher.doFinal(content);
-		
-		return cipherText;
-	}
+
 
 	/**
 	 * Sign content using provided private key
@@ -150,5 +131,4 @@ public class Encryptor {
 		
 		return signatureBytes;
 	}
-
 }
