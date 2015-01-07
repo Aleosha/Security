@@ -4,11 +4,14 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 public class CipherProvider {
 	
@@ -42,5 +45,15 @@ public class CipherProvider {
 		byte[] cipherText = cipher.doFinal(content);
 		
 		return cipherText;
+	}
+
+	public static byte[] decipher(byte[] encryptedFile, byte[] decryptedSecretKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+		SecretKey k = new SecretKeySpec(decryptedSecretKey, "AES");
+        Cipher c = Cipher.getInstance("AES");
+        c.init(Cipher.DECRYPT_MODE, k);
+        
+        byte[] decValue = c.doFinal(encryptedFile);
+        
+        return decValue;
 	}
 }

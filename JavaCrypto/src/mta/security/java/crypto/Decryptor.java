@@ -7,17 +7,13 @@ import java.security.Key;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.PublicKey;
-import java.security.Signature;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
 import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
 
 public class Decryptor {
 
@@ -28,14 +24,9 @@ public class Decryptor {
 			byte[] decryptedSecretKey = CipherProvider.decipher(encryptedSecretKey, privateKey);
 			
 			byte[] encryptedFile = FileProvider.getEncryptedFileAsBytes();
-			
-		
-			Key k = new SecretKeySpec(decryptedSecretKey, "AES");
-	        Cipher c = Cipher.getInstance("AES");
-	        c.init(Cipher.DECRYPT_MODE, k);
-	        
-	        byte[] decValue = c.doFinal(encryptedFile);
-	        String decryptedValue = new String(decValue);
+							
+	        byte[] decValue = CipherProvider.decipher(encryptedFile, decryptedSecretKey);
+			String decryptedValue = new String(decValue );
 			
 			System.out.println("Decrypted message is:" + decryptedValue);
 			byte[] signature = FileProvider.getSignatureFileAsBytes();
@@ -47,8 +38,10 @@ public class Decryptor {
 			else {
 				System.out.println("Invalid signature");
 			}
-		} catch (URISyntaxException | IOException | UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException | CertificateException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | NoSuchProviderException | SignatureException e1) {
-			// TODO Auto-generated catch block
+		} catch (URISyntaxException | IOException | UnrecoverableKeyException | 
+				KeyStoreException | NoSuchAlgorithmException | CertificateException | 
+				InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | 
+				BadPaddingException | NoSuchProviderException | SignatureException e1) {
 			e1.printStackTrace();
 		}
 	}

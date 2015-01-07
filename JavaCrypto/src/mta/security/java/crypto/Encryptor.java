@@ -31,7 +31,7 @@ public class Encryptor {
 
 	// Provider that we're using
 	private static final String PROVIDER = "SUN";
-	private static final String SIGNATURE_ALGORITHM = "SHA1withDSA";
+
 	private static final String RANDOM_ALGORITHM = "SHA1PRNG";
 	
 
@@ -44,7 +44,7 @@ public class Encryptor {
 				
 			Key privateKey = KeyProvider.getPrivateKey(Sides.ENCRYPTOR);
 			// Get signature for the file
-			byte[] signatureBytes = signContent(content, privateKey);
+			byte[] signatureBytes = SignatureProvider.signContent(content, privateKey);
 			
 			Key publicKey = KeyProvider.getPublicKey(Sides.ENCRYPTOR);
 				
@@ -110,25 +110,4 @@ public class Encryptor {
 
 
 
-	/**
-	 * Sign content using provided private key
-	 * @param content
-	 * @param privateKey
-	 * @return
-	 * @throws NoSuchAlgorithmException
-	 * @throws InvalidKeyException
-	 * @throws SignatureException
-	 * @throws NoSuchProviderException 
-	 */
-	private static byte[] signContent(byte[] content, Key privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, NoSuchProviderException {
-		byte[] signatureBytes;
-		Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
-		
-		signature.initSign((PrivateKey) privateKey);
-		signature.update(content);
-		
-		signatureBytes = signature.sign();		
-		
-		return signatureBytes;
-	}
 }
