@@ -16,6 +16,8 @@ public class SignatureProvider {
 
 	private static final String SIGNATURE_ALGORITHM = "SHA1withDSA";
 	
+	private static final String PROVIDER = "SUN";
+	
 	/**
 	 * 
 	 * @param decodedValue
@@ -28,9 +30,10 @@ public class SignatureProvider {
 	 * @throws CertificateException
 	 * @throws IOException
 	 * @throws SignatureException
+	 * @throws NoSuchProviderException 
 	 */
-	public static boolean verify(byte[] decodedValue, byte[] signature, KeyProvider keyProvider) throws InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, SignatureException {
-		Signature signatureValidator = Signature.getInstance(SIGNATURE_ALGORITHM);
+	public static boolean verify(byte[] decodedValue, byte[] signature, KeyProvider keyProvider) throws InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, SignatureException, NoSuchProviderException {
+		Signature signatureValidator = Signature.getInstance(SIGNATURE_ALGORITHM, PROVIDER);
 		signatureValidator.initVerify( (PublicKey) keyProvider.getPublicKey(Sides.DECRYPTOR));
 		signatureValidator.update(decodedValue);
 		return signatureValidator.verify(signature);		
@@ -49,7 +52,7 @@ public class SignatureProvider {
 	 */
 	public static byte[] signContent(byte[] content, Key privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, NoSuchProviderException {
 		byte[] signatureBytes;
-		Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
+		Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM, PROVIDER);
 		
 		signature.initSign((PrivateKey) privateKey);
 		signature.update(content);

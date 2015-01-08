@@ -22,3 +22,5 @@ In addition to encodedMessage.txt two more files are created in the same directo
 Decryptor reads decrypted.txt, secret.txt and signature.txt from the \bin directory, and outputs:
 1. The decoded message
 2. Whether the signature on the file is valid or not
+
+We choose SunJCE provider, as it provides most of the required algorithms, and is recommended by Sun/Oracle

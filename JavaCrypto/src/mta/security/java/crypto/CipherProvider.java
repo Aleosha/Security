@@ -34,7 +34,7 @@ public class CipherProvider {
 	private static final String ASYMMETRIC_ALGORITHM = "RSA";
 
 	// Provider that we're using
-	private static final String PROVIDER = "SUN";
+	private static final String PROVIDER = "SunJCE";
 
 	private static final String RANDOM_ALGORITHM = "SHA1PRNG";
 
@@ -50,7 +50,7 @@ public class CipherProvider {
 			throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, IllegalBlockSizeException,
 			BadPaddingException, NoSuchProviderException {
-		Cipher cipher = Cipher.getInstance(ASYMMETRIC_ALGORITHM);
+		Cipher cipher = Cipher.getInstance(ASYMMETRIC_ALGORITHM, PROVIDER);
 		cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
 		byte[] cipherText = cipher.doFinal(content);
@@ -75,7 +75,7 @@ public class CipherProvider {
 			throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, IllegalBlockSizeException,
 			BadPaddingException, NoSuchProviderException {
-		Cipher cipher = Cipher.getInstance(ASYMMETRIC_ALGORITHM);
+		Cipher cipher = Cipher.getInstance(ASYMMETRIC_ALGORITHM, PROVIDER);
 		cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
 		byte[] cipherText = cipher.doFinal(content);
@@ -87,9 +87,9 @@ public class CipherProvider {
 			byte[] decryptedSecretKey, byte[] iv)
 			throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, IllegalBlockSizeException,
-			BadPaddingException, InvalidAlgorithmParameterException {
+			BadPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException {
 		SecretKey k = new SecretKeySpec(decryptedSecretKey, SYMMETRIC_ALGORITHM);
-		Cipher c = Cipher.getInstance(SYMMETRIC_ALGORITHM_WITH_MODE);
+		Cipher c = Cipher.getInstance(SYMMETRIC_ALGORITHM_WITH_MODE, PROVIDER);
 		IvParameterSpec ivspec = new IvParameterSpec(iv);
 
 		c.init(Cipher.DECRYPT_MODE, k, ivspec);
@@ -118,14 +118,13 @@ public class CipherProvider {
 			IOException, NoSuchProviderException,
 			InvalidAlgorithmParameterException {
 
-		KeyGenerator keyGen = KeyGenerator.getInstance(SYMMETRIC_ALGORITHM);
+		KeyGenerator keyGen = KeyGenerator.getInstance(SYMMETRIC_ALGORITHM, PROVIDER);
 		keyGen.init(SYMMETRIC_ALGORITHM_KEY_SIZE);
 		SecretKey secretKey = keyGen.generateKey();
 
 		Cipher cipher = Cipher.getInstance(SYMMETRIC_ALGORITHM_WITH_MODE);
 
-		SecureRandom secureRandom = SecureRandom.getInstance(RANDOM_ALGORITHM,
-				PROVIDER);
+		SecureRandom secureRandom = SecureRandom.getInstance(RANDOM_ALGORITHM);
 		byte[] iv = new byte[IV_LENGTH];
 		SecureRandom prng = new SecureRandom();
 		prng.nextBytes(iv);
