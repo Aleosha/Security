@@ -1,5 +1,6 @@
 package mta.security.java.crypto;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.InvalidAlgorithmParameterException;
@@ -20,6 +21,11 @@ public class Decryptor {
 
 	public static void main(String[] args) {
 		try {
+			
+			if (args.length == 0) {
+				throw new IllegalArgumentException("Keystore password not provided");
+			}
+			
 			byte[] encryptedSecretKey = FileProvider.getSecretFileAsBytes();
 			KeyProvider keyProvider = new KeyProvider();
 			keyProvider.setDecryptorKeystorePassword(args[0]);
@@ -34,6 +40,11 @@ public class Decryptor {
 			String decryptedValue = new String(decValue );
 			
 			System.out.println("Decrypted message is:" + decryptedValue);
+			
+			try (FileOutputStream outputStream = new FileOutputStream(FileProvider.getDecryptedFile())) {
+				outputStream.write(decryptedValue.getBytes());
+			}
+			
 			byte[] signature = FileProvider.getSignatureFileAsBytes();
 
 			

@@ -2,10 +2,7 @@ package mta.security.java.crypto;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.file.Paths;
 import java.security.Key;
-
-import javax.crypto.SecretKey;
 
 
 public class Encryptor {	
@@ -28,6 +25,9 @@ public class Encryptor {
 			}
 			else {
 				content = FileProvider.getFlatFileAsBytes();	
+			}
+			if (args.length < 2) {
+				throw new IllegalArgumentException("Keystore password not provided");
 			}
 			KeyProvider keyProvider = new KeyProvider();
 			keyProvider.setEncryptorKeystorePassword(args[1]);

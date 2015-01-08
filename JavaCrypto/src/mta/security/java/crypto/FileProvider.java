@@ -14,19 +14,21 @@ public class FileProvider {
 	// Path to the file we're encoding
 	private static final String FLAT_FILE_NAME = "/plaintext.txt";
 	private final static String SECRET_FILE_NAME = "/secret.txt";
-	private static final String ENCODED_FILE_NAME = "/decrypted.txt";
+	private static final String ENCRYPTED_FILE_NAME = "/crypted.txt";
+	private static final String DECRYPTED_FILE_NAME = "/decrypted.txt";
 	private static final String SIGNATURE_FILE_NAME = "/signature.txt";
 	private static final String IV_FILE = "/iv.txt";
 	
 	private final static String SECRET_FILE_PATH = FileProvider.class.getResource("/").getPath() + SECRET_FILE_NAME;
 	private final static String SIGNATURE_FILE_PATH = FileProvider.class.getResource("/").getPath() + SIGNATURE_FILE_NAME;
+	private static final String DECRYPTED_FILE_PATH = FileProvider.class.getResource("/").getPath() + DECRYPTED_FILE_NAME;;
 
 	/**
 	 * Get the encrypted file
 	 * @return
 	 */
 	static File getEncryptedFile() {
-		File file = new File(FileProvider.class.getResource("/").getPath() + ENCODED_FILE_NAME);
+		File file = new File(FileProvider.class.getResource("/").getPath() + ENCRYPTED_FILE_NAME);
 		return file;
 	}
 	
@@ -63,7 +65,7 @@ public class FileProvider {
 	
 	public static byte[] getEncryptedFileAsBytes() throws URISyntaxException, IOException {
 		
-		return getFile(ENCODED_FILE_NAME);
+		return getFile(ENCRYPTED_FILE_NAME);
 	}
 	
 	public static byte[] getFile(String path) throws URISyntaxException, IOException
@@ -94,5 +96,9 @@ public class FileProvider {
 		File file = new File(FileProvider.class.getResource("/").getPath() + IV_FILE);
 		
 		return file;
+	}
+
+	public static File getDecryptedFile() {
+		return new File(DECRYPTED_FILE_PATH);
 	}
 }
