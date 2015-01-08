@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.security.Key;
 
 public class Encryptor {
@@ -77,14 +78,26 @@ public class Encryptor {
 				outputStream.write(secretKeyHolder.getIv());
 			}
 			
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(FileProvider.getAlgorithmFile()))) {
-				writer.write("");
-			}
+			writeAlgorithmConfiguration(cipherProvider);
 			
 
 			System.out.println("Encryption completed");
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	private static void writeAlgorithmConfiguration(
+			CipherProvider cipherProvider) throws IOException {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FileProvider.getAlgorithmFile()))) {
+			writer.write(cipherProvider.getAsymmetricAlgorithm());
+			writer.newLine();
+			writer.write(cipherProvider.getSymmetricAlgorithm());
+			writer.newLine();
+			writer.write(cipherProvider.getSymmetricAlgorithmMode());
+			writer.newLine();
+			writer.write(cipherProvider.getSymmetricAlgorithmPadding());
+			writer.newLine();
 		}
 	}
 }

@@ -14,10 +14,11 @@ Please run commands specified in the commands.txt before executing the programs.
 The project is divided into two main applications: Encryptor and Decryptor
 Encryptor receives full path to file as it's only argument and outputs in into \bin\encodedMessage.txt
 If no argument is provided, it will use \resources\plaintext.txt file as an example
-In addition to encodedMessage.txt three more files are created in the same directory:
+In addition to encodedMessage.txt more files are created in the same directory:
 1. signature.txt - contains the signature for the message
 2. iv.txt - contains plain IV
 3. secret.txt - contains crypted secret key for the message
+4. algorithm.txt - documents algorithms used
 
 Decryptor reads decrypted.txt, secret.txt and signature.txt from the \bin directory, and outputs:
 1. The decoded message

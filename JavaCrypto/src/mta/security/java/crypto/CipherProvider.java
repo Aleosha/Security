@@ -69,20 +69,16 @@ public class CipherProvider {
 	}
 
 	public String getSymmetricAlgorithmWithMode() {
-		return symmetricAlgorithmWithMode;
+		return  symmetricAlgorithm
+				+ "/"
+				+ symmetricAlgorithmMode
+				+ "/"
+				+ symmetricAlgorithmPadding;
 	}
 
-	public void setSymmetricAlgorithmWithMode(String symmetricAlgorithmWithMode) {
-		this.symmetricAlgorithmWithMode = symmetricAlgorithmWithMode;
-	}
 
 	private String symmetricAlgorithm = "AES";
 
-	private String symmetricAlgorithmWithMode = symmetricAlgorithm
-			+ "/"
-			+ symmetricAlgorithmMode
-			+ "/"
-			+ symmetricAlgorithmPadding;
 
 	/**
 	 * Decipher assymetric content using private key
@@ -156,7 +152,7 @@ public class CipherProvider {
 			BadPaddingException, InvalidAlgorithmParameterException,
 			NoSuchProviderException {
 		SecretKey k = new SecretKeySpec(decryptedSecretKey, symmetricAlgorithm);
-		Cipher c = Cipher.getInstance(symmetricAlgorithmWithMode, PROVIDER);
+		Cipher c = Cipher.getInstance(getSymmetricAlgorithmWithMode(), PROVIDER);
 		IvParameterSpec ivspec = new IvParameterSpec(iv);
 
 		c.init(Cipher.DECRYPT_MODE, k, ivspec);
@@ -193,7 +189,7 @@ public class CipherProvider {
 		// generate secret key
 		SecretKey secretKey = keyGen.generateKey();
 
-		Cipher cipher = Cipher.getInstance(symmetricAlgorithmWithMode,
+		Cipher cipher = Cipher.getInstance(getSymmetricAlgorithmWithMode(),
 				PROVIDER);
 		// create random iv
 		byte[] iv = new byte[IV_LENGTH];
