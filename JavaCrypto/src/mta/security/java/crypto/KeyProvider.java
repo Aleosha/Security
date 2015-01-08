@@ -13,6 +13,13 @@ import java.security.cert.CertificateException;
 
 public class KeyProvider {
 
+	private static final String ENCRYPTOR_KEYSTORE_ALIAS = "encryptor";
+	private static final String DECRYPTOR_KEYSTORE_ALIAS = "decryptor";
+	private static final String ENCRYPTOR_KEYSTORE_LOCATION = "C:\\temp\\keystore.jks";
+	private static final String DECRYPTOR_KEYSTORE_LOCATION = "C:\\temp\\keystore2.jks";
+	private static final char[] DECRYPTOR_KEYSTORE_PASSWORD = "abcd1234".toCharArray();
+	private static final char[] ENCRYPTOR_KEYSTORE_PASSWORD = "abcd1234".toCharArray();
+
 	public static Key getPublicKey(Sides side) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 		File file = null;
@@ -20,12 +27,12 @@ public class KeyProvider {
 		switch (side)
 		{
 		case ENCRYPTOR:
-			file = new File("C:\\temp\\keystore.jks");
-			alias = "decryptor";
+			file = new File(ENCRYPTOR_KEYSTORE_LOCATION);
+			alias = DECRYPTOR_KEYSTORE_ALIAS;
 			break;
 		case DECRYPTOR:
-			file = new File("C:\\temp\\keystore2.jks");
-			alias = "encryptor";
+			file = new File(DECRYPTOR_KEYSTORE_LOCATION);
+			alias = ENCRYPTOR_KEYSTORE_ALIAS;
 			break;
 		}
 		
@@ -47,20 +54,22 @@ public class KeyProvider {
 		File file = null;
 		Key k = null;
 		if (Sides.DECRYPTOR.equals(side)) {
-			file = new File("C:\\temp\\keystore2.jks");	
+			file = new File(DECRYPTOR_KEYSTORE_LOCATION);	
 		}
 		else {
-			file = new File("C:\\temp\\keystore.jks");
+			file = new File(ENCRYPTOR_KEYSTORE_LOCATION);
 		}
 		
 		
 		FileInputStream keystoreFile = new FileInputStream(file);
-		keyStore.load(keystoreFile, "abcd1234".toCharArray());
+		
 		if (Sides.DECRYPTOR.equals(side)) {
-			k = keyStore.getKey("decryptor", "abcd1234".toCharArray());	
+			keyStore.load(keystoreFile, DECRYPTOR_KEYSTORE_PASSWORD);
+			k = keyStore.getKey(DECRYPTOR_KEYSTORE_ALIAS, DECRYPTOR_KEYSTORE_PASSWORD);	
 		}
 		else {
-			k = keyStore.getKey("encryptor", "abcd1234".toCharArray());
+			keyStore.load(keystoreFile, ENCRYPTOR_KEYSTORE_PASSWORD);
+			k = keyStore.getKey(ENCRYPTOR_KEYSTORE_ALIAS, ENCRYPTOR_KEYSTORE_PASSWORD);
 		}
 		
 		

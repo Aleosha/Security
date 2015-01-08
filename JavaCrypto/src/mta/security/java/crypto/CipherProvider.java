@@ -24,6 +24,14 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class CipherProvider {
 	
+	private static final int IV_LENGTH = 16;
+
+	private static final int SYMMETRIC_ALGORITHM_KEY_SIZE = 128;
+
+	private static final String SYMMETRIC_ALGORITHM_PADDING = "PKCS5Padding";
+
+	private static final String SUMMETRIC_ALGORITHM_MODE = "CBC";
+
 	private static final String ASYMMETRIC_ALGORITHM = "RSA";
 	
 	// Provider that we're using
@@ -33,7 +41,7 @@ public class CipherProvider {
 
 	private static final String SYMMETRIC_ALGORITHM = "AES";
 
-	private static final String SYMMETRIC_ALGORITHM_WITH_MODE = SYMMETRIC_ALGORITHM + "/" + "CBC" + "/" + "PKCS5Padding";
+	private static final String SYMMETRIC_ALGORITHM_WITH_MODE = SYMMETRIC_ALGORITHM + "/" + SUMMETRIC_ALGORITHM_MODE + "/" + SYMMETRIC_ALGORITHM_PADDING;
 
 	public static byte[] decipher(byte[] content, Key privateKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException {
 		Cipher cipher = Cipher.getInstance(ASYMMETRIC_ALGORITHM);
@@ -93,13 +101,13 @@ public class CipherProvider {
 	public static SecretKeyHolder writeSecureFile(File file, byte[] signatureBytes) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, FileNotFoundException, IOException, NoSuchProviderException, InvalidAlgorithmParameterException {
 
 		KeyGenerator keyGen = KeyGenerator.getInstance(SYMMETRIC_ALGORITHM);
-		keyGen.init(128);
+		keyGen.init(SYMMETRIC_ALGORITHM_KEY_SIZE);
 		SecretKey secretKey = keyGen.generateKey();
        
 		Cipher cipher = Cipher.getInstance(SYMMETRIC_ALGORITHM_WITH_MODE);
 		
 		SecureRandom secureRandom = SecureRandom.getInstance(RANDOM_ALGORITHM, PROVIDER);
-		byte[] iv = new byte[16];	
+		byte[] iv = new byte[IV_LENGTH];	
 		SecureRandom prng = new SecureRandom();
 		prng.nextBytes(iv);
 
