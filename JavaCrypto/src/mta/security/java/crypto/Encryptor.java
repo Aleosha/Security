@@ -38,9 +38,9 @@ public class Encryptor {
 
 			// get encriptor's private key for signature
 			Key privateKey = keyProvider.getPrivateKey(Sides.ENCRYPTOR);
-			
+
 			SignatureProvider signatureProvider = new SignatureProvider();
-			
+
 			// get signature for the file
 			byte[] signatureBytes = signatureProvider.signContent(content,
 					privateKey);
@@ -53,7 +53,7 @@ public class Encryptor {
 					configurationFile)) {
 				outputStream.write(signatureBytes);
 			}
-			
+
 			CipherProvider cipherProvider = new CipherProvider();
 
 			File encryptedFile = FileProvider.getEncryptedFile();
@@ -73,16 +73,15 @@ public class Encryptor {
 					configurationFile)) {
 				outputStream.write(secretKeyCipher);
 			}
-			
-			configurationFile = FileProvider.getIvConfigurationFile();
 
+			configurationFile = FileProvider.getIvConfigurationFile();
+			// insert IV into configuration file
 			try (FileOutputStream outputStream = new FileOutputStream(
 					configurationFile)) {
 				outputStream.write(secretKeyHolder.getIv());
 			}
-			
+			// algorithm configurations
 			writeAlgorithmConfiguration(cipherProvider, signatureProvider);
-			
 
 			System.out.println("Encryption completed");
 		} catch (Exception e) {
@@ -91,8 +90,10 @@ public class Encryptor {
 	}
 
 	private static void writeAlgorithmConfiguration(
-			CipherProvider cipherProvider, SignatureProvider signatureProvider) throws IOException {
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FileProvider.getAlgorithmFile()))) {
+			CipherProvider cipherProvider, SignatureProvider signatureProvider)
+			throws IOException {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(
+				FileProvider.getAlgorithmFile()))) {
 			writer.write(cipherProvider.getAsymmetricAlgorithm());
 			writer.newLine();
 			writer.write(cipherProvider.getSymmetricAlgorithm());

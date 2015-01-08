@@ -30,57 +30,75 @@ public class Decryptor {
 
 	public static void main(String[] args) {
 		try {
-			
+
 			if (args.length == 0) {
-				throw new IllegalArgumentException("Keystore password not provided");
+				throw new IllegalArgumentException(
+						"Keystore password not provided");
 			}
-			
+
 			byte[] encryptedSecretKey = FileProvider.getSecretFileAsBytes();
 			KeyProvider keyProvider = new KeyProvider();
-			keyProvider.setDecryptorKeystorePassword(args[0]);
+			keyProvider.setDecryptorKeystorePassword(args[0]); // args[0] is
+																// password to
+																// Key store
+			// get decryptor's private key
 			Key privateKey = keyProvider.getPrivateKey(Sides.DECRYPTOR);
 			CipherProvider cipherProvider = new CipherProvider();
-			List<String> algorithmConfiguration = Files.readAllLines(FileProvider.getAlgorithmFile().toPath(), Charset.defaultCharset());
-			
+			// get algorithm configurations
+			List<String> algorithmConfiguration = Files.readAllLines(
+					FileProvider.getAlgorithmFile().toPath(),
+					Charset.defaultCharset());
+
 			if (algorithmConfiguration.size() != 5) {
-				throw new IllegalArgumentException("Wrong number of algorithm parameters");
+				throw new IllegalArgumentException(
+						"Wrong number of algorithm parameters");
 			}
-			
-			cipherProvider.setAsymmetricAlgorithm(algorithmConfiguration.get(ASYMMETRIC_ALGORITHM_INDEX));
-			cipherProvider.setSymmetricAlgorithm(algorithmConfiguration.get(SYMMETRIC_ALGORITHM_INDEX));
-			cipherProvider.setSymmetricAlgorithmMode(algorithmConfiguration.get(SYMMETRIC_ALGORITHM_MODE_INDEX));
-			cipherProvider.setSymmetricAlgorithmPadding(algorithmConfiguration.get(SYMMETRIC_ALGORITHM_PADDING_INDEX));
-			
-			byte[] decryptedSecretKey = cipherProvider.decipher(encryptedSecretKey, privateKey);
-			
+
+			cipherProvider.setAsymmetricAlgorithm(algorithmConfiguration
+					.get(ASYMMETRIC_ALGORITHM_INDEX));
+			cipherProvider.setSymmetricAlgorithm(algorithmConfiguration
+					.get(SYMMETRIC_ALGORITHM_INDEX));
+			cipherProvider.setSymmetricAlgorithmMode(algorithmConfiguration
+					.get(SYMMETRIC_ALGORITHM_MODE_INDEX));
+			cipherProvider.setSymmetricAlgorithmPadding(algorithmConfiguration
+					.get(SYMMETRIC_ALGORITHM_PADDING_INDEX));
+
+			// decrypt symmetric key
+			byte[] decryptedSecretKey = cipherProvider.decipher(
+					encryptedSecretKey, privateKey);
+
 			byte[] encryptedFile = FileProvider.getEncryptedFileAsBytes();
+			// get IV
 			byte[] iv = FileProvider.getIv();
-			//iv = CipherProvider.decipher(iv, privateKey);
-							
-	        byte[] decValue = cipherProvider.decipher(encryptedFile, decryptedSecretKey, iv);
-			String decryptedValue = new String(decValue );
-			
+			// decrypt cyphertext
+			byte[] decValue = cipherProvider.decipher(encryptedFile,
+					decryptedSecretKey, iv);
+			String decryptedValue = new String(decValue);
+
 			System.out.println("Decrypted message is:" + decryptedValue);
-			
-			try (FileOutputStream outputStream = new FileOutputStream(FileProvider.getDecryptedFile())) {
+
+			try (FileOutputStream outputStream = new FileOutputStream(
+					FileProvider.getDecryptedFile())) {
 				outputStream.write(decryptedValue.getBytes());
 			}
-			
+			// check for signature
 			byte[] signature = FileProvider.getSignatureFileAsBytes();
 
 			SignatureProvider signatureProvider = new SignatureProvider();
-			signatureProvider.setSignatureAlgorithm(algorithmConfiguration.get(SIGNATURE_ALGORITHM_INDEX));
-			
+			signatureProvider.setSignatureAlgorithm(algorithmConfiguration
+					.get(SIGNATURE_ALGORITHM_INDEX));
+
 			if (signatureProvider.verify(decValue, signature, keyProvider)) {
 				System.out.println("Signature is valid");
-			}
-			else {
+			} else {
 				System.out.println("Invalid signature");
 			}
-		} catch (URISyntaxException | IOException | UnrecoverableKeyException | 
-				KeyStoreException | NoSuchAlgorithmException | CertificateException | 
-				InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | 
-				BadPaddingException | NoSuchProviderException | SignatureException | InvalidAlgorithmParameterException e1) {
+		} catch (URISyntaxException | IOException | UnrecoverableKeyException
+				| KeyStoreException | NoSuchAlgorithmException
+				| CertificateException | InvalidKeyException
+				| NoSuchPaddingException | IllegalBlockSizeException
+				| BadPaddingException | NoSuchProviderException
+				| SignatureException | InvalidAlgorithmParameterException e1) {
 			e1.printStackTrace();
 		}
 	}
