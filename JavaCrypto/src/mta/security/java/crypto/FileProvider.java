@@ -12,9 +12,9 @@ public class FileProvider {
 	
 
 	// Path to the file we're encoding
-	private static final String FLAT_FILE_NAME = "/message.txt";
+	private static final String FLAT_FILE_NAME = "/plaintext.txt";
 	private final static String SECRET_FILE_NAME = "/secret.txt";
-	private static final String ENCODED_FILE_NAME = "/encodedMessage.txt";
+	private static final String ENCODED_FILE_NAME = "/decrypted.txt";
 	private static final String SIGNATURE_FILE_NAME = "/signature.txt";
 	private static final String IV_FILE = "/iv.txt";
 	

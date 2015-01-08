@@ -1,0 +1,18 @@
+keytool -genkeypair -alias encryptor -keystore C:\temp\keystore.jks
+
+keytool -genkeypair -alias decryptor -keyalg RSA -keystore C:\temp\keystore2.jks
+
+keytool -exportcert -keystore C:\temp\keystore2.jks -alias decryptor -file C:\temp\decryptor.cer
+
+keytool -importcert -alias decryptor -file C:\temp\decryptor.cer -keypass abcd1234 -keystore C:\temp\keystore.jks -storepass abcd1234
+
+keytool -exportcert -keystore C:\temp\keystore.jks -alias encryptor -file C:\temp\encryptor.cer
+
+keytool -importcert -alias encryptor -file C:\temp\encryptor.cer -keypass abcd1234 -keystore C:\temp\keystore2.jks -storepass abcd1234
+
+
+"C:\Program Files\Java\jdk1.7.0_71\bin\javac" src\mta\security\java\crypto\*.java 
+
+
+"java.exe" -classpath .\bin mta.security.java.crypto.Encryptor C:\Temp\message.txt
+"java.exe" -classpath .\bin mta.security.java.crypto.Decryptor
