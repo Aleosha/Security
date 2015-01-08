@@ -27,22 +27,62 @@ public class CipherProvider {
 
 	private static final int SYMMETRIC_ALGORITHM_KEY_SIZE = 128;
 
-	private static final String SYMMETRIC_ALGORITHM_PADDING = "PKCS5Padding";
+	private String symmetricAlgorithmPadding = "PKCS5Padding";
 
-	private static final String SUMMETRIC_ALGORITHM_MODE = "CBC";
+	private String symmetricAlgorithmMode = "CBC";
 
-	private static final String ASYMMETRIC_ALGORITHM = "RSA";
+	private String asymmetricAlgorithm = "RSA";
 
 	// Provider that we're using
 	private static final String PROVIDER = "SunJCE";
 
-	private static final String SYMMETRIC_ALGORITHM = "AES";
+	public String getSymmetricAlgorithmPadding() {
+		return symmetricAlgorithmPadding;
+	}
 
-	private static final String SYMMETRIC_ALGORITHM_WITH_MODE = SYMMETRIC_ALGORITHM
+	public void setSymmetricAlgorithmPadding(String symmetricAlgorithmPadding) {
+		this.symmetricAlgorithmPadding = symmetricAlgorithmPadding;
+	}
+
+	public String getSymmetricAlgorithmMode() {
+		return symmetricAlgorithmMode;
+	}
+
+	public void setSymmetricAlgorithmMode(String symmetricAlgorithmMode) {
+		this.symmetricAlgorithmMode = symmetricAlgorithmMode;
+	}
+
+	public String getAsymmetricAlgorithm() {
+		return asymmetricAlgorithm;
+	}
+
+	public void setAsymmetricAlgorithm(String asymmetricAlgorithm) {
+		this.asymmetricAlgorithm = asymmetricAlgorithm;
+	}
+
+	public String getSymmetricAlgorithm() {
+		return symmetricAlgorithm;
+	}
+
+	public void setSymmetricAlgorithm(String symmetricAlgorithm) {
+		this.symmetricAlgorithm = symmetricAlgorithm;
+	}
+
+	public String getSymmetricAlgorithmWithMode() {
+		return symmetricAlgorithmWithMode;
+	}
+
+	public void setSymmetricAlgorithmWithMode(String symmetricAlgorithmWithMode) {
+		this.symmetricAlgorithmWithMode = symmetricAlgorithmWithMode;
+	}
+
+	private String symmetricAlgorithm = "AES";
+
+	private String symmetricAlgorithmWithMode = symmetricAlgorithm
 			+ "/"
-			+ SUMMETRIC_ALGORITHM_MODE
+			+ symmetricAlgorithmMode
 			+ "/"
-			+ SYMMETRIC_ALGORITHM_PADDING;
+			+ symmetricAlgorithmPadding;
 
 	/**
 	 * Decipher assymetric content using private key
@@ -61,7 +101,7 @@ public class CipherProvider {
 			throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, IllegalBlockSizeException,
 			BadPaddingException, NoSuchProviderException {
-		Cipher cipher = Cipher.getInstance(ASYMMETRIC_ALGORITHM, PROVIDER);
+		Cipher cipher = Cipher.getInstance(asymmetricAlgorithm, PROVIDER);
 		cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
 		byte[] cipherText = cipher.doFinal(content);
@@ -86,7 +126,7 @@ public class CipherProvider {
 			throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, IllegalBlockSizeException,
 			BadPaddingException, NoSuchProviderException {
-		Cipher cipher = Cipher.getInstance(ASYMMETRIC_ALGORITHM, PROVIDER);
+		Cipher cipher = Cipher.getInstance(asymmetricAlgorithm, PROVIDER);
 		cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
 		byte[] cipherText = cipher.doFinal(content);
@@ -115,8 +155,8 @@ public class CipherProvider {
 			InvalidKeyException, IllegalBlockSizeException,
 			BadPaddingException, InvalidAlgorithmParameterException,
 			NoSuchProviderException {
-		SecretKey k = new SecretKeySpec(decryptedSecretKey, SYMMETRIC_ALGORITHM);
-		Cipher c = Cipher.getInstance(SYMMETRIC_ALGORITHM_WITH_MODE, PROVIDER);
+		SecretKey k = new SecretKeySpec(decryptedSecretKey, symmetricAlgorithm);
+		Cipher c = Cipher.getInstance(symmetricAlgorithmWithMode, PROVIDER);
 		IvParameterSpec ivspec = new IvParameterSpec(iv);
 
 		c.init(Cipher.DECRYPT_MODE, k, ivspec);
@@ -147,13 +187,13 @@ public class CipherProvider {
 			InvalidKeyException, FileNotFoundException, IOException,
 			NoSuchProviderException, InvalidAlgorithmParameterException {
 
-		KeyGenerator keyGen = KeyGenerator.getInstance(SYMMETRIC_ALGORITHM,
+		KeyGenerator keyGen = KeyGenerator.getInstance(symmetricAlgorithm,
 				PROVIDER);
 		keyGen.init(SYMMETRIC_ALGORITHM_KEY_SIZE);
 		// generate secret key
 		SecretKey secretKey = keyGen.generateKey();
 
-		Cipher cipher = Cipher.getInstance(SYMMETRIC_ALGORITHM_WITH_MODE,
+		Cipher cipher = Cipher.getInstance(symmetricAlgorithmWithMode,
 				PROVIDER);
 		// create random iv
 		byte[] iv = new byte[IV_LENGTH];

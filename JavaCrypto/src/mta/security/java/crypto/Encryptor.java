@@ -77,8 +77,10 @@ public class Encryptor {
 				outputStream.write(secretKeyHolder.getIv());
 			}
 			
-			BufferedWriter writer = new BufferedWriter(new FileWriter(FileProvider.getAlgorithmFile()));
-			writer.write("");
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(FileProvider.getAlgorithmFile()))) {
+				writer.write("");
+			}
+			
 
 			System.out.println("Encryption completed");
 		} catch (Exception e) {
