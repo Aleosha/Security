@@ -11,8 +11,6 @@ keytool -exportcert -keystore C:\temp\keystore.jks -alias encryptor -file C:\tem
 keytool -importcert -alias encryptor -file C:\temp\encryptor.cer -keypass abcd1234 -keystore C:\temp\keystore2.jks -storepass abcd1234
 
 
-"C:\Program Files\Java\jdk1.7.0_71\bin\javac" src\mta\security\java\crypto\*.java 
-
-
+"javac" src\mta\security\java\crypto\*.java 
 "java.exe" -classpath .\bin mta.security.java.crypto.Encryptor C:\Temp\message.txt
 "java.exe" -classpath .\bin mta.security.java.crypto.Decryptor
