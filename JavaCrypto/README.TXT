@@ -24,3 +24,4 @@ Decryptor reads decrypted.txt, secret.txt and signature.txt from the \bin direct
 2. Whether the signature on the file is valid or not
 
 We choose SunJCE provider, as it provides most of the required algorithms, and is recommended by Sun/Oracle
+For signature we use SUN provider

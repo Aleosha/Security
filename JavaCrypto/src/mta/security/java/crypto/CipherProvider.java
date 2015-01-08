@@ -102,7 +102,7 @@ public class CipherProvider {
 	/**
 	 * 
 	 * @param file
-	 * @param signatureBytes
+	 * @param content
 	 * @return
 	 * @throws NoSuchAlgorithmException
 	 * @throws NoSuchPaddingException
@@ -113,7 +113,7 @@ public class CipherProvider {
 	 * @throws InvalidAlgorithmParameterException
 	 */
 	public static SecretKeyHolder writeSecureFile(File file,
-			byte[] signatureBytes) throws NoSuchAlgorithmException,
+			byte[] content) throws NoSuchAlgorithmException,
 			NoSuchPaddingException, InvalidKeyException, FileNotFoundException,
 			IOException, NoSuchProviderException,
 			InvalidAlgorithmParameterException {
@@ -134,7 +134,7 @@ public class CipherProvider {
 		try (FileOutputStream outputStream = new FileOutputStream(file)) {
 			try (CipherOutputStream cipherStream = new CipherOutputStream(
 					outputStream, cipher)) {
-				cipherStream.write(signatureBytes);
+				cipherStream.write(content);
 			}
 		}
 
