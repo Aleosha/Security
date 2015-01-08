@@ -9,6 +9,8 @@ Considerations for choosing provider:
 	Does provider implementation has received federal certification
 	
 	
+Please run commands specified in the commands.txt before executing the programs.
+	
 The project is divided into two main applications: Encryptor and Decryptor
 Encryptor receives full path to file as it's only argument and outputs in into \bin\encodedMessage.txt
 If no argument is provided, it will use \resources\the message.txt file as an example

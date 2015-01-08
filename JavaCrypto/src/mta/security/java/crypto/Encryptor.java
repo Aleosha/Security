@@ -15,8 +15,9 @@ public class Encryptor {
 		
 		try {
 			byte[] content = null;
-			String path = args[0];
-			if (args.length >= 1) {				
+			
+			if (args.length >= 1) {
+				String path = args[0];
 				File fileToEncrypt = new File(path);
 				if (!fileToEncrypt.isFile()) {
 					throw new IllegalArgumentException("File name is not valid");
