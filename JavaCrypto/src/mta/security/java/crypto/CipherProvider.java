@@ -148,7 +148,7 @@ public class CipherProvider {
 		keyGen.init(SYMMETRIC_ALGORITHM_KEY_SIZE);
 		SecretKey secretKey = keyGen.generateKey();
 
-		Cipher cipher = Cipher.getInstance(SYMMETRIC_ALGORITHM_WITH_MODE);
+		Cipher cipher = Cipher.getInstance(SYMMETRIC_ALGORITHM_WITH_MODE, PROVIDER);
 
 		SecureRandom secureRandom = SecureRandom.getInstance(RANDOM_ALGORITHM);
 		byte[] iv = new byte[IV_LENGTH];
