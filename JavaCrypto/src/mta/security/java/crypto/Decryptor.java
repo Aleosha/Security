@@ -22,6 +22,12 @@ import javax.crypto.NoSuchPaddingException;
 
 public class Decryptor {
 
+	private static final int SIGNATURE_ALGORITHM_INDEX = 4;
+	private static final int SYMMETRIC_ALGORITHM_PADDING_INDEX = 3;
+	private static final int SYMMETRIC_ALGORITHM_MODE_INDEX = 2;
+	private static final int SYMMETRIC_ALGORITHM_INDEX = 1;
+	private static final int ASYMMETRIC_ALGORITHM_INDEX = 0;
+
 	public static void main(String[] args) {
 		try {
 			
@@ -36,14 +42,14 @@ public class Decryptor {
 			CipherProvider cipherProvider = new CipherProvider();
 			List<String> algorithmConfiguration = Files.readAllLines(FileProvider.getAlgorithmFile().toPath(), Charset.defaultCharset());
 			
-			if (algorithmConfiguration.size() != 4) {
+			if (algorithmConfiguration.size() != 5) {
 				throw new IllegalArgumentException("Wrong number of algorithm parameters");
 			}
 			
-			cipherProvider.setAsymmetricAlgorithm(algorithmConfiguration.get(0));
-			cipherProvider.setSymmetricAlgorithm(algorithmConfiguration.get(1));
-			cipherProvider.setSymmetricAlgorithmMode(algorithmConfiguration.get(2));
-			cipherProvider.setSymmetricAlgorithmPadding(algorithmConfiguration.get(3));
+			cipherProvider.setAsymmetricAlgorithm(algorithmConfiguration.get(ASYMMETRIC_ALGORITHM_INDEX));
+			cipherProvider.setSymmetricAlgorithm(algorithmConfiguration.get(SYMMETRIC_ALGORITHM_INDEX));
+			cipherProvider.setSymmetricAlgorithmMode(algorithmConfiguration.get(SYMMETRIC_ALGORITHM_MODE_INDEX));
+			cipherProvider.setSymmetricAlgorithmPadding(algorithmConfiguration.get(SYMMETRIC_ALGORITHM_PADDING_INDEX));
 			
 			byte[] decryptedSecretKey = cipherProvider.decipher(encryptedSecretKey, privateKey);
 			
@@ -62,8 +68,10 @@ public class Decryptor {
 			
 			byte[] signature = FileProvider.getSignatureFileAsBytes();
 
+			SignatureProvider signatureProvider = new SignatureProvider();
+			signatureProvider.setSignatureAlgorithm(algorithmConfiguration.get(SIGNATURE_ALGORITHM_INDEX));
 			
-			if (SignatureProvider.verify(decValue, signature, keyProvider)) {
+			if (signatureProvider.verify(decValue, signature, keyProvider)) {
 				System.out.println("Signature is valid");
 			}
 			else {

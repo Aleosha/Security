@@ -14,10 +14,22 @@ import java.security.cert.CertificateException;
 
 public class SignatureProvider {
 
-	private static final String SIGNATURE_ALGORITHM = "SHA1withDSA";
+	private String signatureAlgorithm = "SHA1withDSA";
 	
 	private static final String PROVIDER = "SUN";
 	
+	
+
+	public String getSignatureAlgorithm() {
+		return signatureAlgorithm;
+	}
+
+
+	public void setSignatureAlgorithm(String signatureAlgorithm) {
+		this.signatureAlgorithm = signatureAlgorithm;
+	}
+
+
 	/**
 	 * 
 	 * @param decodedValue
@@ -32,8 +44,8 @@ public class SignatureProvider {
 	 * @throws SignatureException
 	 * @throws NoSuchProviderException 
 	 */
-	public static boolean verify(byte[] decodedValue, byte[] signature, KeyProvider keyProvider) throws InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, SignatureException, NoSuchProviderException {
-		Signature signatureValidator = Signature.getInstance(SIGNATURE_ALGORITHM, PROVIDER);
+	public boolean verify(byte[] decodedValue, byte[] signature, KeyProvider keyProvider) throws InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, SignatureException, NoSuchProviderException {
+		Signature signatureValidator = Signature.getInstance(signatureAlgorithm, PROVIDER);
 		signatureValidator.initVerify( (PublicKey) keyProvider.getPublicKey(Sides.DECRYPTOR));
 		signatureValidator.update(decodedValue);
 		return signatureValidator.verify(signature);		
@@ -50,9 +62,9 @@ public class SignatureProvider {
 	 * @throws SignatureException
 	 * @throws NoSuchProviderException 
 	 */
-	public static byte[] signContent(byte[] content, Key privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, NoSuchProviderException {
+	public byte[] signContent(byte[] content, Key privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, NoSuchProviderException {
 		byte[] signatureBytes;
-		Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM, PROVIDER);
+		Signature signature = Signature.getInstance(signatureAlgorithm, PROVIDER);
 		
 		signature.initSign((PrivateKey) privateKey);
 		signature.update(content);
