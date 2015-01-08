@@ -1,7 +1,9 @@
 package mta.security.java.crypto;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.security.Key;
 
 public class Encryptor {
@@ -47,10 +49,12 @@ public class Encryptor {
 					configurationFile)) {
 				outputStream.write(signatureBytes);
 			}
+			
+			CipherProvider cipherProvider = new CipherProvider();
 
 			File encryptedFile = FileProvider.getEncryptedFile();
 			// symmetric encryption of plain
-			SecretKeyHolder secretKeyHolder = CipherProvider.writeSecureFile(
+			SecretKeyHolder secretKeyHolder = cipherProvider.writeSecureFile(
 					encryptedFile, content);
 
 			configurationFile = FileProvider.getSecretConfigurationFile();
@@ -58,7 +62,7 @@ public class Encryptor {
 			// get decriptor's public key for encryption of our symmetric key
 			Key publicKey = keyProvider.getPublicKey(Sides.ENCRYPTOR);
 			// encrypt symmetric key
-			byte[] secretKeyCipher = CipherProvider.cipher(secretKeyHolder
+			byte[] secretKeyCipher = cipherProvider.cipher(secretKeyHolder
 					.getSecretKey().getEncoded(), publicKey);
 
 			try (FileOutputStream outputStream = new FileOutputStream(
@@ -72,6 +76,9 @@ public class Encryptor {
 					configurationFile)) {
 				outputStream.write(secretKeyHolder.getIv());
 			}
+			
+			BufferedWriter writer = new BufferedWriter(new FileWriter(FileProvider.getAlgorithmFile()));
+			writer.write("");
 
 			System.out.println("Encryption completed");
 		} catch (Exception e) {

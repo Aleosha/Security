@@ -57,7 +57,7 @@ public class CipherProvider {
 	 * @throws BadPaddingException
 	 * @throws NoSuchProviderException
 	 */
-	public static byte[] decipher(byte[] content, Key privateKey)
+	public byte[] decipher(byte[] content, Key privateKey)
 			throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, IllegalBlockSizeException,
 			BadPaddingException, NoSuchProviderException {
@@ -82,7 +82,7 @@ public class CipherProvider {
 	 * @throws BadPaddingException
 	 * @throws NoSuchProviderException
 	 */
-	public static byte[] cipher(byte[] content, Key publicKey)
+	public byte[] cipher(byte[] content, Key publicKey)
 			throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, IllegalBlockSizeException,
 			BadPaddingException, NoSuchProviderException {
@@ -109,7 +109,7 @@ public class CipherProvider {
 	 * @throws InvalidAlgorithmParameterException
 	 * @throws NoSuchProviderException
 	 */
-	public static byte[] decipher(byte[] encryptedFile,
+	public byte[] decipher(byte[] encryptedFile,
 			byte[] decryptedSecretKey, byte[] iv)
 			throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, IllegalBlockSizeException,
@@ -142,7 +142,7 @@ public class CipherProvider {
 	 * @throws NoSuchProviderException
 	 * @throws InvalidAlgorithmParameterException
 	 */
-	public static SecretKeyHolder writeSecureFile(File file, byte[] content)
+	public SecretKeyHolder writeSecureFile(File file, byte[] content)
 			throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, FileNotFoundException, IOException,
 			NoSuchProviderException, InvalidAlgorithmParameterException {

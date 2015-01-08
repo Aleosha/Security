@@ -30,13 +30,14 @@ public class Decryptor {
 			KeyProvider keyProvider = new KeyProvider();
 			keyProvider.setDecryptorKeystorePassword(args[0]);
 			Key privateKey = keyProvider.getPrivateKey(Sides.DECRYPTOR);
-			byte[] decryptedSecretKey = CipherProvider.decipher(encryptedSecretKey, privateKey);
+			CipherProvider cipherProvider = new CipherProvider();
+			byte[] decryptedSecretKey = cipherProvider.decipher(encryptedSecretKey, privateKey);
 			
 			byte[] encryptedFile = FileProvider.getEncryptedFileAsBytes();
 			byte[] iv = FileProvider.getIv();
 			//iv = CipherProvider.decipher(iv, privateKey);
 							
-	        byte[] decValue = CipherProvider.decipher(encryptedFile, decryptedSecretKey, iv);
+	        byte[] decValue = cipherProvider.decipher(encryptedFile, decryptedSecretKey, iv);
 			String decryptedValue = new String(decValue );
 			
 			System.out.println("Decrypted message is:" + decryptedValue);

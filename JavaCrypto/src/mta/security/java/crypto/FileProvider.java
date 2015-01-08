@@ -17,13 +17,17 @@ public class FileProvider {
 	private static final String DECRYPTED_FILE_NAME = "/decrypted.txt";
 	private static final String SIGNATURE_FILE_NAME = "/signature.txt";
 	private static final String IV_FILE = "/iv.txt";
+	private static final String ALGORITHM_FILE_NAME = "/algorithm.txt";
 
 	private final static String SECRET_FILE_PATH = FileProvider.class
 			.getResource("/").getPath() + SECRET_FILE_NAME;
 	private final static String SIGNATURE_FILE_PATH = FileProvider.class
 			.getResource("/").getPath() + SIGNATURE_FILE_NAME;
 	private static final String DECRYPTED_FILE_PATH = FileProvider.class
-			.getResource("/").getPath() + DECRYPTED_FILE_NAME;;
+			.getResource("/").getPath() + DECRYPTED_FILE_NAME;
+	
+	private static final String ALGORITHM_FILE_PATH = FileProvider.class
+			.getResource("/").getPath() + ALGORITHM_FILE_NAME;
 
 	/**
 	 * Get the encrypted file
@@ -110,5 +114,9 @@ public class FileProvider {
 			content = Files.readAllBytes(Paths.get(path));
 		}
 		return content;
+	}
+
+	public static File getAlgorithmFile() {
+		return new File(ALGORITHM_FILE_PATH);
 	}
 }
