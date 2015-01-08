@@ -59,10 +59,8 @@ public class Encryptor {
 			
 			configurationFile = FileProvider.getIvConfigurationFile();
 			
-			byte[] ivCipher = CipherProvider.cipher(secretKeyHolder.getIv(), publicKey);
-			
 			try (FileOutputStream outputStream = new FileOutputStream(configurationFile)) {
-				outputStream.write(ivCipher);
+				outputStream.write(secretKeyHolder.getIv());
 			}
 			
 			System.out.println("Encryption completed");

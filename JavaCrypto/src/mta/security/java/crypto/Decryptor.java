@@ -34,7 +34,7 @@ public class Decryptor {
 			
 			byte[] encryptedFile = FileProvider.getEncryptedFileAsBytes();
 			byte[] iv = FileProvider.getIv();
-			iv = CipherProvider.decipher(iv, privateKey);
+			//iv = CipherProvider.decipher(iv, privateKey);
 							
 	        byte[] decValue = CipherProvider.decipher(encryptedFile, decryptedSecretKey, iv);
 			String decryptedValue = new String(decValue );

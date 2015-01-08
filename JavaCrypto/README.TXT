@@ -16,7 +16,7 @@ Encryptor receives full path to file as it's only argument and outputs in into \
 If no argument is provided, it will use \resources\plaintext.txt file as an example
 In addition to encodedMessage.txt two more files are created in the same directory:
 1. signature.txt - contains the signature for the message
-2. iv.txt - contains crypted IV
+2. iv.txt - contains plain IV
 3. secret.txt - contains crypted secret key for the message
 
 Decryptor reads decrypted.txt, secret.txt and signature.txt from the \bin directory, and outputs:
