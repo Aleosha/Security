@@ -17,10 +17,19 @@ public class KeyProvider {
 	private static final String DECRYPTOR_KEYSTORE_ALIAS = "decryptor";
 	private static final String ENCRYPTOR_KEYSTORE_LOCATION = "C:\\temp\\keystore.jks";
 	private static final String DECRYPTOR_KEYSTORE_LOCATION = "C:\\temp\\keystore2.jks";
-	private static final char[] DECRYPTOR_KEYSTORE_PASSWORD = "abcd1234".toCharArray();
-	private static final char[] ENCRYPTOR_KEYSTORE_PASSWORD = "abcd1234".toCharArray();
-
-	public static Key getPublicKey(Sides side) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	private char[] encryptorKeystorePassword;
+	private char[] decryptorKeystorePassword;
+	
+	/**
+	 * 
+	 * @param side - which site requests the public key. Each side will receive the public key of the OTHER side
+	 * @return - Public key of the other side
+	 * @throws KeyStoreException
+	 * @throws NoSuchAlgorithmException
+	 * @throws CertificateException
+	 * @throws IOException
+	 */
+	public Key getPublicKey(Sides side) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 		File file = null;
 		String alias = "";
@@ -49,7 +58,7 @@ public class KeyProvider {
 	
 	}
 	
-	public static Key getPrivateKey(Sides side) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException {
+	public Key getPrivateKey(Sides side) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException {
 		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 		File file = null;
 		Key k = null;
@@ -64,16 +73,32 @@ public class KeyProvider {
 		FileInputStream keystoreFile = new FileInputStream(file);
 		
 		if (Sides.DECRYPTOR.equals(side)) {
-			keyStore.load(keystoreFile, DECRYPTOR_KEYSTORE_PASSWORD);
-			k = keyStore.getKey(DECRYPTOR_KEYSTORE_ALIAS, DECRYPTOR_KEYSTORE_PASSWORD);	
+			keyStore.load(keystoreFile, getDecryptorKeystorePassword());
+			k = keyStore.getKey(DECRYPTOR_KEYSTORE_ALIAS, getDecryptorKeystorePassword());	
 		}
 		else {
-			keyStore.load(keystoreFile, ENCRYPTOR_KEYSTORE_PASSWORD);
-			k = keyStore.getKey(ENCRYPTOR_KEYSTORE_ALIAS, ENCRYPTOR_KEYSTORE_PASSWORD);
+			keyStore.load(keystoreFile, getEncryptorKeystorePassword());
+			k = keyStore.getKey(ENCRYPTOR_KEYSTORE_ALIAS, getEncryptorKeystorePassword());
 		}
 		
 		
 		return k;
+	}
+
+	private char[] getDecryptorKeystorePassword() {
+		return this.decryptorKeystorePassword;
+	}
+
+	private char[] getEncryptorKeystorePassword() {
+		return this.encryptorKeystorePassword;
+	}
+
+	public void setEncryptorKeystorePassword(String password) {
+		this.encryptorKeystorePassword = password.toCharArray();
+	}
+
+	public void setDecryptorKeystorePassword(String password) {
+		this.decryptorKeystorePassword = password.toCharArray();
 	}
 
 }

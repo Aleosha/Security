@@ -18,7 +18,8 @@ public class FileProvider {
 	private static final String SIGNATURE_FILE_NAME = "/signature.txt";
 	private static final String IV_FILE = "/iv.txt";
 	
-	private final static String SECRET_FILE_PATH = FileProvider.class.getResource("/").getPath() + SECRET_FILE_NAME;	
+	private final static String SECRET_FILE_PATH = FileProvider.class.getResource("/").getPath() + SECRET_FILE_NAME;
+	private final static String SIGNATURE_FILE_PATH = FileProvider.class.getResource("/").getPath() + SIGNATURE_FILE_NAME;
 
 	/**
 	 * Get the encrypted file
@@ -34,7 +35,7 @@ public class FileProvider {
 	 * @return
 	 */
 	static File getSignatureConfigurationFile() {
-		File file = new File(FileProvider.class.getResource("/").getPath() + SIGNATURE_FILE_NAME);
+		File file = new File(SIGNATURE_FILE_PATH);
 		
 		return file;
 	}
@@ -69,7 +70,7 @@ public class FileProvider {
 	{
 		byte[] content = null;
 		// Read flat file into byte array
-		URL messageAsResource = Encryptor.class.getResource(path);
+		URL messageAsResource = FileProvider.class.getResource(path);
 		
 		if (messageAsResource != null) {
 			URI uri = messageAsResource.toURI();

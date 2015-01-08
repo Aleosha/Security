@@ -12,5 +12,5 @@ keytool -importcert -alias encryptor -file C:\temp\encryptor.cer -keypass abcd12
 
 
 "javac" src\mta\security\java\crypto\*.java 
-"java.exe" -classpath .\bin mta.security.java.crypto.Encryptor C:\Temp\message.txt
-"java.exe" -classpath .\bin mta.security.java.crypto.Decryptor
+"java.exe" -classpath .\bin mta.security.java.crypto.Encryptor C:\Temp\message.txt abcd1234
+"java.exe" -classpath .\bin mta.security.java.crypto.Decryptor abcd1234

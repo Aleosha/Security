@@ -21,7 +21,9 @@ public class Decryptor {
 	public static void main(String[] args) {
 		try {
 			byte[] encryptedSecretKey = FileProvider.getSecretFileAsBytes();
-			Key privateKey = KeyProvider.getPrivateKey(Sides.DECRYPTOR);
+			KeyProvider keyProvider = new KeyProvider();
+			keyProvider.setDecryptorKeystorePassword(args[0]);
+			Key privateKey = keyProvider.getPrivateKey(Sides.DECRYPTOR);
 			byte[] decryptedSecretKey = CipherProvider.decipher(encryptedSecretKey, privateKey);
 			
 			byte[] encryptedFile = FileProvider.getEncryptedFileAsBytes();
@@ -35,7 +37,7 @@ public class Decryptor {
 			byte[] signature = FileProvider.getSignatureFileAsBytes();
 
 			
-			if (SignatureProvider.verify(decValue, signature)) {
+			if (SignatureProvider.verify(decValue, signature, keyProvider)) {
 				System.out.println("Signature is valid");
 			}
 			else {

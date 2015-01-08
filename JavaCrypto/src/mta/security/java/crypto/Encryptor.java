@@ -29,13 +29,14 @@ public class Encryptor {
 			else {
 				content = FileProvider.getFlatFileAsBytes();	
 			}
-			
+			KeyProvider keyProvider = new KeyProvider();
+			keyProvider.setEncryptorKeystorePassword(args[1]);
 				
-			Key privateKey = KeyProvider.getPrivateKey(Sides.ENCRYPTOR);
+			Key privateKey = keyProvider.getPrivateKey(Sides.ENCRYPTOR);
 			// Get signature for the file
 			byte[] signatureBytes = SignatureProvider.signContent(content, privateKey);
 			
-			Key publicKey = KeyProvider.getPublicKey(Sides.ENCRYPTOR);
+			Key publicKey = keyProvider.getPublicKey(Sides.ENCRYPTOR);
 				
 			File configurationFile = FileProvider.getSignatureConfigurationFile();
 			

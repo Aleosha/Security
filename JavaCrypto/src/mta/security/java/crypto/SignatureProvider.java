@@ -20,6 +20,7 @@ public class SignatureProvider {
 	 * 
 	 * @param decodedValue
 	 * @param signature
+	 * @param keyProvider 
 	 * @return
 	 * @throws InvalidKeyException
 	 * @throws KeyStoreException
@@ -28,9 +29,9 @@ public class SignatureProvider {
 	 * @throws IOException
 	 * @throws SignatureException
 	 */
-	public static boolean verify(byte[] decodedValue, byte[] signature) throws InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, SignatureException {
+	public static boolean verify(byte[] decodedValue, byte[] signature, KeyProvider keyProvider) throws InvalidKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, SignatureException {
 		Signature signatureValidator = Signature.getInstance(SIGNATURE_ALGORITHM);
-		signatureValidator.initVerify( (PublicKey) KeyProvider.getPublicKey(Sides.DECRYPTOR));
+		signatureValidator.initVerify( (PublicKey) keyProvider.getPublicKey(Sides.DECRYPTOR));
 		signatureValidator.update(decodedValue);
 		return signatureValidator.verify(signature);		
 	}
