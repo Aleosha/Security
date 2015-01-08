@@ -36,8 +36,6 @@ public class CipherProvider {
 	// Provider that we're using
 	private static final String PROVIDER = "SunJCE";
 
-	private static final String RANDOM_ALGORITHM = "SHA1PRNG";
-
 	private static final String SYMMETRIC_ALGORITHM = "AES";
 
 	private static final String SYMMETRIC_ALGORITHM_WITH_MODE = SYMMETRIC_ALGORITHM
@@ -47,7 +45,8 @@ public class CipherProvider {
 			+ SYMMETRIC_ALGORITHM_PADDING;
 
 	/**
-	 * Decipher assymetric content using private key 
+	 * Decipher assymetric content using private key
+	 * 
 	 * @param content
 	 * @param privateKey
 	 * @return
@@ -97,6 +96,7 @@ public class CipherProvider {
 
 	/**
 	 * Decipher symmetrically encrypted file using secret key and IV
+	 * 
 	 * @param encryptedFile
 	 * @param decryptedSecretKey
 	 * @param iv
@@ -113,7 +113,8 @@ public class CipherProvider {
 			byte[] decryptedSecretKey, byte[] iv)
 			throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, IllegalBlockSizeException,
-			BadPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException {
+			BadPaddingException, InvalidAlgorithmParameterException,
+			NoSuchProviderException {
 		SecretKey k = new SecretKeySpec(decryptedSecretKey, SYMMETRIC_ALGORITHM);
 		Cipher c = Cipher.getInstance(SYMMETRIC_ALGORITHM_WITH_MODE, PROVIDER);
 		IvParameterSpec ivspec = new IvParameterSpec(iv);
@@ -127,8 +128,11 @@ public class CipherProvider {
 
 	/**
 	 * Writes file encoded with symmetric algorithm
-	 * @param file - file to write to
-	 * @param content - content to write
+	 * 
+	 * @param file
+	 *            - file to write to
+	 * @param content
+	 *            - content to write
 	 * @return - combination of secret key and IV
 	 * @throws NoSuchAlgorithmException
 	 * @throws NoSuchPaddingException
@@ -138,25 +142,27 @@ public class CipherProvider {
 	 * @throws NoSuchProviderException
 	 * @throws InvalidAlgorithmParameterException
 	 */
-	public static SecretKeyHolder writeSecureFile(File file,
-			byte[] content) throws NoSuchAlgorithmException,
-			NoSuchPaddingException, InvalidKeyException, FileNotFoundException,
-			IOException, NoSuchProviderException,
-			InvalidAlgorithmParameterException {
+	public static SecretKeyHolder writeSecureFile(File file, byte[] content)
+			throws NoSuchAlgorithmException, NoSuchPaddingException,
+			InvalidKeyException, FileNotFoundException, IOException,
+			NoSuchProviderException, InvalidAlgorithmParameterException {
 
-		KeyGenerator keyGen = KeyGenerator.getInstance(SYMMETRIC_ALGORITHM, PROVIDER);
+		KeyGenerator keyGen = KeyGenerator.getInstance(SYMMETRIC_ALGORITHM,
+				PROVIDER);
 		keyGen.init(SYMMETRIC_ALGORITHM_KEY_SIZE);
+		// generate secret key
 		SecretKey secretKey = keyGen.generateKey();
 
-		Cipher cipher = Cipher.getInstance(SYMMETRIC_ALGORITHM_WITH_MODE, PROVIDER);
-
-		SecureRandom secureRandom = SecureRandom.getInstance(RANDOM_ALGORITHM);
+		Cipher cipher = Cipher.getInstance(SYMMETRIC_ALGORITHM_WITH_MODE,
+				PROVIDER);
+		// create random iv
 		byte[] iv = new byte[IV_LENGTH];
 		SecureRandom prng = new SecureRandom();
 		prng.nextBytes(iv);
 
 		cipher.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(iv));
 
+		// encrypt plain with symmetric key
 		try (FileOutputStream outputStream = new FileOutputStream(file)) {
 			try (CipherOutputStream cipherStream = new CipherOutputStream(
 					outputStream, cipher)) {
@@ -164,7 +170,7 @@ public class CipherProvider {
 			}
 		}
 
-		return new SecretKeyHolder(secretKey, secureRandom, iv);
+		return new SecretKeyHolder(secretKey, iv);
 	}
 
 }
