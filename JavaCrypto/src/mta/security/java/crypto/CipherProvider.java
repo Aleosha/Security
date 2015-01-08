@@ -46,6 +46,18 @@ public class CipherProvider {
 			+ "/"
 			+ SYMMETRIC_ALGORITHM_PADDING;
 
+	/**
+	 * Decipher assymetric content using private key 
+	 * @param content
+	 * @param privateKey
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchPaddingException
+	 * @throws InvalidKeyException
+	 * @throws IllegalBlockSizeException
+	 * @throws BadPaddingException
+	 * @throws NoSuchProviderException
+	 */
 	public static byte[] decipher(byte[] content, Key privateKey)
 			throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, IllegalBlockSizeException,
@@ -59,7 +71,7 @@ public class CipherProvider {
 	}
 
 	/**
-	 * Get cipher from digest
+	 * Cipher content assymetrically using public key of the other side
 	 * 
 	 * @param digest
 	 * @param publicKey
@@ -83,6 +95,20 @@ public class CipherProvider {
 		return cipherText;
 	}
 
+	/**
+	 * Decipher symmetrically encrypted file using secret key and IV
+	 * @param encryptedFile
+	 * @param decryptedSecretKey
+	 * @param iv
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchPaddingException
+	 * @throws InvalidKeyException
+	 * @throws IllegalBlockSizeException
+	 * @throws BadPaddingException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws NoSuchProviderException
+	 */
 	public static byte[] decipher(byte[] encryptedFile,
 			byte[] decryptedSecretKey, byte[] iv)
 			throws NoSuchAlgorithmException, NoSuchPaddingException,
@@ -100,10 +126,10 @@ public class CipherProvider {
 	}
 
 	/**
-	 * 
-	 * @param file
-	 * @param content
-	 * @return
+	 * Writes file encoded with symmetric algorithm
+	 * @param file - file to write to
+	 * @param content - content to write
+	 * @return - combination of secret key and IV
 	 * @throws NoSuchAlgorithmException
 	 * @throws NoSuchPaddingException
 	 * @throws InvalidKeyException
